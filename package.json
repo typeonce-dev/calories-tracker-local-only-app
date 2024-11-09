@@ -1,0 +1,28 @@
+{
+  "name": "calories-tracker-tanstack-start-pglite",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "dev": "vite --port=3001",
+    "build": "vite build",
+    "serve": "vite preview",
+    "start": "vite"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.0.0-alpha.31",
+    "@tanstack/router-plugin": "^1.79.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.2",
+    "tailwindcss": "4.0.0-alpha.31",
+    "vite": "^5.4.8",
+    "vite-tsconfig-paths": "^5.1.1"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "^1.79.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
