@@ -8,7 +8,8 @@
     "dev": "vite --port=3001",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "generate": "pnpm drizzle-kit generate"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.0.0-alpha.31",
