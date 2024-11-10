@@ -12,6 +12,13 @@ export class Profile extends Effect.Service<Profile>()("Profile", {
 
       setDbVersion: (currentVersion: number) =>
         store.set("dbVersion", currentVersion.toString()),
+
+      currentPlanId: store
+        .get("currentPlanId")
+        .pipe(Effect.map(Option.flatMap(Number.parse))),
+
+      setCurrentPlanId: (currentPlanId: number) =>
+        store.set("currentPlanId", currentPlanId.toString()),
     };
   }),
   dependencies: [layerLocalStorage],

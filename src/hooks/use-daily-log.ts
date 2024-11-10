@@ -9,6 +9,7 @@ export const useDailyLog = (date: string) => {
     .select()
     .from(dailyLogTable)
     .where(eq(dailyLogTable.date, date))
+    .limit(1)
     .toSQL();
   return useLiveQuery(sql, params);
 };

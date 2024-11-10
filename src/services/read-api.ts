@@ -1,11 +1,30 @@
-import { Effect } from "effect";
+import { eq } from "drizzle-orm";
+import { Array, Data, Effect, flow } from "effect";
+import { dailyLogTable } from "~/schema/drizzle";
 import { Pglite } from "./pglite";
+
+class ReadApiError extends Data.TaggedError("ReadApiError")<{
+  cause: unknown;
+}> {}
 
 export class ReadApi extends Effect.Service<ReadApi>()("ReadApi", {
   effect: Effect.gen(function* () {
-    const db = yield* Pglite;
+    const { query } = yield* Pglite;
     return {
-      get: "",
+      getCurrentDateLog: (date: string) =>
+        query((_) =>
+          _.select()
+            .from(dailyLogTable)
+            .where(eq(dailyLogTable.date, date))
+            .limit(1)
+        ).pipe(
+          Effect.flatMap(
+            flow(
+              Array.head,
+              Effect.mapError((error) => new ReadApiError({ cause: error }))
+            )
+          )
+        ),
     };
   }),
   dependencies: [Pglite.Default],

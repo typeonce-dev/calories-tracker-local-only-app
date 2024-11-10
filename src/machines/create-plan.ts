@@ -1,5 +1,6 @@
 import { Effect } from "effect";
 import { assign, fromPromise, setup } from "xstate";
+import { Profile } from "~/services/profile";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
 
@@ -39,7 +40,10 @@ export const machine = setup({
         RuntimeClient.runPromise(
           Effect.gen(function* () {
             const api = yield* WriteApi;
-            yield* api.createPlan(input);
+            const profile = yield* Profile;
+
+            const { id } = yield* api.createPlan(input);
+            yield* profile.setCurrentPlanId(id);
           })
         )
     ),
