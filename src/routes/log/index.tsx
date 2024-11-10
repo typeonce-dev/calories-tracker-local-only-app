@@ -70,8 +70,15 @@ function RouteComponent() {
               {dailyLog?.rows
                 .filter((log) => log.meal === meal)
                 .map((log) => (
-                  <li key={log.id}>
-                    {log.foodId} - {log.quantity}
+                  <li key={log.id} className="p-2 border border-slate-300">
+                    <p className="font-bold">{log.name}</p>
+                    <p>{log.quantity}g</p>
+                    <p>{(log.quantity / 100) * log.calories}kcal</p>
+                    <p>
+                      {(log.quantity / 100) * log.carbohydrates}carbohydrates
+                    </p>
+                    <p>{(log.quantity / 100) * log.fats}fats</p>
+                    <p>{(log.quantity / 100) * log.proteins}proteins</p>
                   </li>
                 ))}
             </ul>
