@@ -17,6 +17,9 @@ importers:
       '@electric-sql/pglite':
         specifier: ^0.2.12
         version: 0.2.12
+      '@electric-sql/pglite-react':
+        specifier: ^0.2.12
+        version: 0.2.12(@electric-sql/pglite@0.2.12)(react@18.3.1)
       '@tanstack/react-router':
         specifier: ^1.79.0
         version: 1.79.0(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -174,6 +177,12 @@ packages:
     resolution: {integrity: sha512-xO96rj+719UBNYzuC+KKDyzDNXZM6VnaNfSEPWWgmFI74ytiWa/VyeJFHwOVMdUvgAnvmPk4P7LO5YHMvNv46A==}
     peerDependencies:
       effect: ^3.10.13
+
+  '@electric-sql/pglite-react@0.2.12':
+    resolution: {integrity: sha512-j489fJeCZ1jw6S88L9hPoBxEkqaOhd/U1bi/AomXa2tDv/E36eNK2ZCTYVrb1TAoaAZgYf92dBv+m4VrDb8RDA==}
+    peerDependencies:
+      '@electric-sql/pglite': ^0.2.12
+      react: ^18.0.0
 
   '@electric-sql/pglite@0.2.12':
     resolution: {integrity: sha512-J/X42ujcoFEbOkgRyoNqZB5qcqrnJRWVlwpH3fKYoJkTz49N91uAK/rDSSG/85WRas9nC9mdV4FnMTxnQWE/rw==}
@@ -1657,6 +1666,11 @@ snapshots:
       effect: 3.10.13
       find-my-way-ts: 0.1.5
       multipasta: 0.2.5
+
+  '@electric-sql/pglite-react@0.2.12(@electric-sql/pglite@0.2.12)(react@18.3.1)':
+    dependencies:
+      '@electric-sql/pglite': 0.2.12
+      react: 18.3.1
 
   '@electric-sql/pglite@0.2.12': {}
 
