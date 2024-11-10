@@ -6,15 +6,14 @@ import { RuntimeClient } from "~/services/runtime-client";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
-});
-
-function HomeComponent() {
-  const startup = () => {
+  loader: () =>
     RuntimeClient.runPromise(
       Effect.gen(function* () {
         const migrations = yield* Migrations;
         const profile = yield* Profile;
+
         const dbVersion = yield* profile.dbVersion;
+
         if (Option.isNone(dbVersion)) {
           yield* migrations[0];
           yield* profile.setDbVersion(0);
@@ -27,13 +26,10 @@ function HomeComponent() {
           yield* Effect.log("Migrations done, version " + dbVersion.value);
         }
       }).pipe(Effect.tapErrorCause(Effect.logError))
-    );
-  };
-  return (
-    <main>
-      <button type="button" onClick={startup}>
-        Startup
-      </button>
-    </main>
-  );
+    ),
+  errorComponent: () => <p>Error loading migrations</p>,
+});
+
+function HomeComponent() {
+  return <main></main>;
 }

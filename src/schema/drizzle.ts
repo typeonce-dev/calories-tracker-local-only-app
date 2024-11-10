@@ -40,8 +40,12 @@ export const servingTable = pgTable("serving", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   meal: mealEnum().notNull(),
   quantity: integer().notNull(),
-  foodId: integer("food_id").references(() => foodTable.id),
-  dailyLogDate: date("daily_log_date").references(() => dailyLogTable.date),
+  foodId: integer("food_id")
+    .references(() => foodTable.id)
+    .notNull(),
+  dailyLogDate: date("daily_log_date")
+    .references(() => dailyLogTable.date)
+    .notNull(),
 });
 
 export const planTable = pgTable("plan", {
@@ -54,5 +58,7 @@ export const planTable = pgTable("plan", {
 
 export const dailyLogTable = pgTable("daily_log", {
   date: date().primaryKey(),
-  planId: integer("plan_id").references(() => planTable.id),
+  planId: integer("plan_id")
+    .references(() => planTable.id)
+    .notNull(),
 });
