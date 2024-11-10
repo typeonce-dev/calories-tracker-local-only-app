@@ -1,6 +1,11 @@
 import { eq } from "drizzle-orm";
 import { Data, Effect } from "effect";
-import { dailyLogTable, planTable, servingTable } from "~/schema/drizzle";
+import {
+  dailyLogTable,
+  foodTable,
+  planTable,
+  servingTable,
+} from "~/schema/drizzle";
 import type { Meal } from "~/schema/shared";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
@@ -70,6 +75,33 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
           () => new WriteApiError({ cause: "Quantity must be greater than 0" })
         ).pipe(
           Effect.andThen(query((_) => _.insert(servingTable).values(params)))
+        ),
+
+      createFood: (params: {
+        name: string;
+        brand: string | undefined;
+        calories: number;
+        fats: number;
+        carbohydrates: number;
+        proteins: number;
+        fatsSaturated: number | undefined;
+        salt: number | undefined;
+        fibers: number | undefined;
+        sugars: number | undefined;
+      }) =>
+        Effect.liftPredicate(
+          params,
+          (params) =>
+            params.calories > 0 &&
+            params.fats > 0 &&
+            params.carbohydrates > 0 &&
+            params.proteins > 0,
+          () =>
+            new WriteApiError({
+              cause: "Invalid quantities (must be greater than 0)",
+            })
+        ).pipe(
+          Effect.andThen(query((_) => _.insert(foodTable).values(params)))
         ),
     };
   }),

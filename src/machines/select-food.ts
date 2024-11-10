@@ -8,7 +8,7 @@ export const machine = setup({
   types: {
     context: {} as {
       foodId: number | null;
-      quantity: number | null;
+      quantity: number;
     },
     events: {} as
       | { type: "food.select"; id: number }
@@ -21,8 +21,7 @@ export const machine = setup({
   },
   guards: {
     isNotSelected: ({ context }) => context.foodId === null,
-    isValidQuantity: ({ context }) =>
-      context.quantity !== null && context.quantity > 0,
+    isValidQuantity: ({ context }) => context.quantity > 0,
   },
   actors: {
     createServing: fromPromise(
@@ -46,7 +45,7 @@ export const machine = setup({
   },
 }).createMachine({
   id: "select-food",
-  context: { foodId: null, quantity: null },
+  context: { foodId: null, quantity: 0 },
   initial: "Unselected",
   states: {
     Unselected: {

@@ -1,5 +1,11 @@
 import type { redirect } from "@tanstack/react-router";
+import { clsx, type ClassValue } from "clsx";
 import { Array, Data, Effect, pipe } from "effect";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export class RedirectLoaderError extends Data.TaggedError(
   "RedirectLoaderError"
