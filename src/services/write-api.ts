@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { Data, Effect } from "effect";
-import { dailyLogTable, planTable } from "~/schema/drizzle";
+import { dailyLogTable, planTable, servingTable } from "~/schema/drizzle";
+import type { Meal } from "~/schema/shared";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
 
@@ -39,6 +40,7 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         carbohydratesRatio: number;
         proteinsRatio: number;
       }) =>
+        // TODO: Schema instead of `liftPredicate`
         Effect.liftPredicate(
           params,
           (params) =>
@@ -54,6 +56,20 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
             )
           ),
           singleResult(() => new WriteApiError({ cause: "Plan not created" }))
+        ),
+
+      createServing: (params: {
+        foodId: number;
+        quantity: number;
+        meal: typeof Meal.Type;
+        dailyLogDate: string;
+      }) =>
+        Effect.liftPredicate(
+          params,
+          (params) => params.quantity > 0,
+          () => new WriteApiError({ cause: "Quantity must be greater than 0" })
+        ).pipe(
+          Effect.andThen(query((_) => _.insert(servingTable).values(params)))
         ),
     };
   }),

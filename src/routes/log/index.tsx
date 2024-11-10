@@ -1,6 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { DateTime, Effect, Option } from "effect";
+import SelectFood from "~/components/SelectFood";
 import { useDailyLog } from "~/hooks/use-daily-log";
+import { Meal } from "~/schema/shared";
 import { Profile } from "~/services/profile";
 import { ReadApi } from "~/services/read-api";
 import { RuntimeClient } from "~/services/runtime-client";
@@ -59,7 +61,23 @@ function RouteComponent() {
   return (
     <div>
       <p>Log for {date}</p>
-      <pre>{JSON.stringify(dailyLog, null, 2)}</pre>
+      <div>
+        {Meal.literals.map((meal) => (
+          <div key={meal}>
+            <h2>{meal}</h2>
+            <SelectFood dailyLogDate={date} meal={meal} />
+            <ul>
+              {dailyLog?.rows
+                .filter((log) => log.meal === meal)
+                .map((log) => (
+                  <li key={log.id}>
+                    {log.foodId} - {log.quantity}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
