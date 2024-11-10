@@ -12,12 +12,26 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as LogIndexImport } from './routes/log/index'
+import { Route as LogDateImport } from './routes/log/$date'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LogIndexRoute = LogIndexImport.update({
+  id: '/log/',
+  path: '/log/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LogDateRoute = LogDateImport.update({
+  id: '/log/$date',
+  path: '/log/$date',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,6 +46,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/log/$date': {
+      id: '/log/$date'
+      path: '/log/$date'
+      fullPath: '/log/$date'
+      preLoaderRoute: typeof LogDateImport
+      parentRoute: typeof rootRoute
+    }
+    '/log/': {
+      id: '/log/'
+      path: '/log'
+      fullPath: '/log'
+      preLoaderRoute: typeof LogIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +67,42 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/log/$date': typeof LogDateRoute
+  '/log': typeof LogIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/log/$date': typeof LogDateRoute
+  '/log': typeof LogIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/log/$date': typeof LogDateRoute
+  '/log/': typeof LogIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/log/$date' | '/log'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/log/$date' | '/log'
+  id: '__root__' | '/' | '/log/$date' | '/log/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  LogDateRoute: typeof LogDateRoute
+  LogIndexRoute: typeof LogIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  LogDateRoute: LogDateRoute,
+  LogIndexRoute: LogIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +115,19 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/log/$date",
+        "/log/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/log/$date": {
+      "filePath": "log/$date.tsx"
+    },
+    "/log/": {
+      "filePath": "log/index.tsx"
     }
   }
 }

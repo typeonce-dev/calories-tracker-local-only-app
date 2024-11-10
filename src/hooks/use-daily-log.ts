@@ -1,8 +1,14 @@
 import { useLiveQuery } from "@electric-sql/pglite-react";
+import { eq } from "drizzle-orm";
 import { dailyLogTable } from "~/schema/drizzle";
 import { usePgliteDrizzle } from "./use-pglite-drizzle";
 
-export const useDailyLog = () => {
+export const useDailyLog = (date: string) => {
   const orm = usePgliteDrizzle();
-  return useLiveQuery(orm.select().from(dailyLogTable).toSQL().sql);
+  const { params, sql } = orm
+    .select()
+    .from(dailyLogTable)
+    .where(eq(dailyLogTable.date, date))
+    .toSQL();
+  return useLiveQuery(sql, params);
 };
