@@ -1,11 +1,12 @@
 import { useMachine, useSelector } from "@xstate/react";
-import { Either, Match, Schema } from "effect";
+import { Match, Schema } from "effect";
 import { Button, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
 import { machine } from "~/machines/create-food";
 import type { numberFieldMachine } from "~/machines/number-field";
 import type { textFieldMachine } from "~/machines/text-field";
 import { Food } from "~/schema/food";
+import { validate } from "~/utils";
 import { Dialog, DialogTrigger } from "./Dialog";
 import { Modal, ModalOverlay } from "./Modal";
 import { NumberField } from "./NumberField";
@@ -13,8 +14,6 @@ import { FieldError, Input, Label, TextField } from "./TextField";
 
 export default function CreateFood() {
   const [snapshot, send] = useMachine(machine);
-  console.log(snapshot.context);
-
   return (
     <DialogTrigger>
       <Button>Create food</Button>
@@ -137,18 +136,14 @@ const TextFieldFromActor = ({
     <TextField
       name={name}
       value={context.value}
+      validate={validate(schema)}
       onChange={(value) => actor.send({ type: "update", value })}
-      validate={(value) =>
-        Schema.decodeEither(schema)(value).pipe(
-          Either.flip,
-          Either.map((error) => error.message),
-          Either.getOrNull
-        )
-      }
     >
       <Label>{label}</Label>
       <Input />
-      <FieldError />
+      <Group>
+        <FieldError />
+      </Group>
     </TextField>
   );
 };
@@ -168,23 +163,20 @@ const QuantityField = ({
   return (
     <NumberField
       name={name}
-      step={1}
-      minValue={1}
+      step={0.1}
+      minValue={0}
       value={context.value}
+      validate={validate(schema)}
       onChange={(value) => actor.send({ type: "update", value })}
-      validate={(value) =>
-        Schema.decodeEither(schema)(value).pipe(
-          Either.flip,
-          Either.map((error) => error.message),
-          Either.getOrNull
-        )
-      }
     >
       <Label>{label}</Label>
       <Group>
         <Button slot="decrement">-</Button>
         <Input />
         <Button slot="increment">+</Button>
+      </Group>
+      <Group>
+        <FieldError />
       </Group>
     </NumberField>
   );
