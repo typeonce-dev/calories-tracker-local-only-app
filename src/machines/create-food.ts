@@ -1,6 +1,5 @@
-import { Effect, Schema } from "effect";
+import { Effect } from "effect";
 import { assign, fromPromise, setup, type ActorRefFrom } from "xstate";
-import { Food } from "~/schema/food";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
 import { numberFieldMachine } from "./number-field";
@@ -42,16 +41,12 @@ export const machine = setup({
             salt: input.salt.getSnapshot().context.value,
             fibers: input.fibers.getSnapshot().context.value,
             sugars: input.sugars.getSnapshot().context.value,
-          } satisfies Food;
+          };
 
-          const food = yield* Schema.decode(Food)(params).pipe(
-            Effect.mapError((error) => error.message)
-          );
-
-          yield* Effect.log(food);
+          yield* Effect.log(params);
 
           yield* api
-            .createFood(food)
+            .createFood(params)
             .pipe(Effect.mapError((error) => error.message));
         }).pipe(Effect.tapError(Effect.logError))
       )

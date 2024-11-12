@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import { EmptyQuantityAsUndefined, EmptyStringAsUndefined } from "./shared";
 
-export class Food extends Schema.Class<Food>("Food")({
+export class FoodInsert extends Schema.Class<FoodInsert>("FoodInsert")({
   name: Schema.NonEmptyString,
   brand: EmptyStringAsUndefined,
   calories: Schema.NonNegative,

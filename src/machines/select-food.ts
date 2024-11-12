@@ -1,36 +1,38 @@
 import { Effect } from "effect";
-import { assertEvent, assign, fromPromise, setup } from "xstate";
+import {
+  assertEvent,
+  assign,
+  fromPromise,
+  setup,
+  type ActorRefFrom,
+} from "xstate";
 import type { Meal } from "~/schema/shared";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
+import { numberFieldMachine } from "./number-field";
+
+interface Context {
+  foodId: number | null;
+  quantity: ActorRefFrom<typeof numberFieldMachine>;
+}
 
 export const machine = setup({
   types: {
-    context: {} as {
-      foodId: number | null;
-      quantity: number;
-    },
+    context: {} as Context,
     events: {} as
       | { type: "food.select"; id: number }
-      | { type: "quantity.update"; value: number }
       | {
           type: "quantity.confirm";
           meal: typeof Meal.Type;
           dailyLogDate: string;
         },
   },
-  guards: {
-    isNotSelected: ({ context }) => context.foodId === null,
-    isValidQuantity: ({ context }) => context.quantity > 0,
-  },
   actors: {
     createServing: fromPromise(
       ({
-        input,
+        input: { foodId, quantity, ...input },
       }: {
-        input: {
-          foodId: number;
-          quantity: number;
+        input: Context & {
           meal: typeof Meal.Type;
           dailyLogDate: string;
         };
@@ -38,14 +40,26 @@ export const machine = setup({
         RuntimeClient.runPromise(
           Effect.gen(function* () {
             const api = yield* WriteApi;
-            yield* api.createServing(input);
+
+            if (foodId === null) {
+              return yield* Effect.fail("Food not selected");
+            }
+
+            yield* api.createServing({
+              foodId,
+              quantity: quantity.getSnapshot().context.value,
+              ...input,
+            });
           })
         )
     ),
   },
 }).createMachine({
   id: "select-food",
-  context: { foodId: null, quantity: 0 },
+  context: ({ spawn }) => ({
+    foodId: null,
+    quantity: spawn(numberFieldMachine),
+  }),
   initial: "Unselected",
   states: {
     Unselected: {
@@ -59,15 +73,11 @@ export const machine = setup({
     Selected: {
       always: {
         target: "Unselected",
-        guard: "isNotSelected",
+        guard: ({ context }) => context.foodId === null,
       },
       on: {
-        "quantity.update": {
-          actions: assign(({ event }) => ({ quantity: event.value })),
-        },
         "quantity.confirm": {
           target: "Creating",
-          guard: "isValidQuantity",
         },
       },
     },

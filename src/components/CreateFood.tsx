@@ -3,13 +3,12 @@ import { Match, Schema } from "effect";
 import { Button, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
 import { machine } from "~/machines/create-food";
-import type { numberFieldMachine } from "~/machines/number-field";
 import type { textFieldMachine } from "~/machines/text-field";
-import { Food } from "~/schema/food";
+import { FoodInsert } from "~/schema/food";
 import { validate } from "~/utils";
 import { Dialog, DialogTrigger } from "./Dialog";
 import { Modal, ModalOverlay } from "./Modal";
-import { NumberField } from "./NumberField";
+import QuantityField from "./QuantityField";
 import { FieldError, Input, Label, TextField } from "./TextField";
 
 export default function CreateFood() {
@@ -26,70 +25,70 @@ export default function CreateFood() {
                   <div>
                     <TextFieldFromActor
                       actor={snapshot.context.name}
-                      schema={Food.fields.name}
+                      schema={FoodInsert.fields.name}
                       label="Name"
                       name="name"
                     />
 
                     <TextFieldFromActor
                       actor={snapshot.context.brand}
-                      schema={Food.fields.brand}
+                      schema={FoodInsert.fields.brand}
                       label="Brand"
                       name="brand"
                     />
 
                     <QuantityField
                       actor={snapshot.context.calories}
-                      schema={Food.fields.calories}
+                      schema={FoodInsert.fields.calories}
                       label="Calories"
                       name="calories"
                     />
 
                     <QuantityField
                       actor={snapshot.context.carbohydrates}
-                      schema={Food.fields.carbohydrates}
+                      schema={FoodInsert.fields.carbohydrates}
                       label="Carbohydrates"
                       name="carbohydrates"
                     />
 
                     <QuantityField
                       actor={snapshot.context.sugars}
-                      schema={Food.fields.sugars}
+                      schema={FoodInsert.fields.sugars}
                       label="Sugars"
                       name="sugars"
                     />
 
                     <QuantityField
                       actor={snapshot.context.fibers}
-                      schema={Food.fields.fibers}
+                      schema={FoodInsert.fields.fibers}
                       label="Fibers"
                       name="fibers"
                     />
 
                     <QuantityField
                       actor={snapshot.context.proteins}
-                      schema={Food.fields.proteins}
+                      schema={FoodInsert.fields.proteins}
                       label="Proteins"
                       name="proteins"
                     />
 
                     <QuantityField
                       actor={snapshot.context.fats}
-                      schema={Food.fields.fats}
+                      schema={FoodInsert.fields.fats}
                       label="Fats"
                       name="fats"
                     />
 
                     <QuantityField
                       actor={snapshot.context.fatsSaturated}
-                      schema={Food.fields.fatsSaturated}
+                      schema={FoodInsert.fields.fatsSaturated}
                       label="Fats Saturated"
                       name="fatsSaturated"
                     />
 
                     <QuantityField
                       actor={snapshot.context.salt}
-                      schema={Food.fields.salt}
+                      schema={FoodInsert.fields.salt}
                       label="Salt"
                       name="salt"
                     />
@@ -145,39 +144,5 @@ const TextFieldFromActor = ({
         <FieldError />
       </Group>
     </TextField>
-  );
-};
-
-const QuantityField = ({
-  actor,
-  label,
-  schema,
-  name,
-}: {
-  actor: ActorRefFrom<typeof numberFieldMachine>;
-  label: string;
-  name: string;
-  schema: Schema.Schema.AnyNoContext;
-}) => {
-  const context = useSelector(actor, (snapshot) => snapshot.context);
-  return (
-    <NumberField
-      name={name}
-      step={0.1}
-      minValue={0}
-      value={context.value}
-      validate={validate(schema)}
-      onChange={(value) => actor.send({ type: "update", value })}
-    >
-      <Label>{label}</Label>
-      <Group>
-        <Button slot="decrement">-</Button>
-        <Input />
-        <Button slot="increment">+</Button>
-      </Group>
-      <Group>
-        <FieldError />
-      </Group>
-    </NumberField>
   );
 };

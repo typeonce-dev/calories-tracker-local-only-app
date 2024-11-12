@@ -1,12 +1,13 @@
 import { eq } from "drizzle-orm";
-import { Data, Effect } from "effect";
+import { Data, Effect, flow, Schema } from "effect";
 import {
   dailyLogTable,
   foodTable,
   planTable,
   servingTable,
 } from "~/schema/drizzle";
-import type { Meal } from "~/schema/shared";
+import { FoodInsert } from "~/schema/food";
+import { ServingInsert } from "~/schema/serving";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
 
@@ -63,46 +64,21 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
           singleResult(() => new WriteApiError({ cause: "Plan not created" }))
         ),
 
-      createServing: (params: {
-        foodId: number;
-        quantity: number;
-        meal: typeof Meal.Type;
-        dailyLogDate: string;
-      }) =>
-        Effect.liftPredicate(
-          params,
-          (params) => params.quantity > 0,
-          () => new WriteApiError({ cause: "Quantity must be greater than 0" })
-        ).pipe(
-          Effect.andThen(query((_) => _.insert(servingTable).values(params)))
-        ),
+      createServing: flow(
+        Schema.decode(ServingInsert),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap((values) =>
+          query((_) => _.insert(servingTable).values(values))
+        )
+      ),
 
-      createFood: (params: {
-        name: string;
-        brand: string | undefined;
-        calories: number;
-        fats: number;
-        carbohydrates: number;
-        proteins: number;
-        fatsSaturated: number | undefined;
-        salt: number | undefined;
-        fibers: number | undefined;
-        sugars: number | undefined;
-      }) =>
-        Effect.liftPredicate(
-          params,
-          (params) =>
-            params.calories > 0 &&
-            params.fats > 0 &&
-            params.carbohydrates > 0 &&
-            params.proteins > 0,
-          () =>
-            new WriteApiError({
-              cause: "Invalid quantities (must be greater than 0)",
-            })
-        ).pipe(
-          Effect.andThen(query((_) => _.insert(foodTable).values(params)))
-        ),
+      createFood: flow(
+        Schema.decode(FoodInsert),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap((values) =>
+          query((_) => _.insert(foodTable).values(values))
+        )
+      ),
     };
   }),
   dependencies: [Pglite.Default],

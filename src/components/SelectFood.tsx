@@ -1,14 +1,14 @@
 import { useMachine } from "@xstate/react";
 import { Match } from "effect";
-import { Button, Group } from "react-aria-components";
+import { Button } from "react-aria-components";
 import { useFoods } from "~/hooks/use-foods";
 import { machine } from "~/machines/select-food";
+import { ServingInsert } from "~/schema/serving";
 import type { Meal } from "~/schema/shared";
 import CreateFood from "./CreateFood";
 import { Dialog, DialogTrigger } from "./Dialog";
 import { Modal, ModalOverlay } from "./Modal";
-import { NumberField } from "./NumberField";
-import { Input, Label } from "./TextField";
+import QuantityField from "./QuantityField";
 
 export default function SelectFood({
   meal,
@@ -30,7 +30,7 @@ export default function SelectFood({
                 Match.when("Unselected", () => (
                   <div>
                     <CreateFood />
-                    <div>
+                    <div className="flex flex-col">
                       {foods?.rows.map((food) => (
                         <Button
                           key={food.id}
@@ -46,22 +46,12 @@ export default function SelectFood({
                 )),
                 Match.when("Selected", () => (
                   <div>
-                    <NumberField
+                    <QuantityField
+                      actor={snapshot.context.quantity}
+                      schema={ServingInsert.fields.quantity}
+                      label="Quantity"
                       name="quantity"
-                      step={1}
-                      minValue={1}
-                      value={snapshot.context.quantity}
-                      onChange={(value) =>
-                        send({ type: "quantity.update", value })
-                      }
-                    >
-                      <Label>Quantity</Label>
-                      <Group>
-                        <Button slot="decrement">-</Button>
-                        <Input />
-                        <Button slot="increment">+</Button>
-                      </Group>
-                    </NumberField>
+                    />
 
                     <Button
                       onPress={() =>

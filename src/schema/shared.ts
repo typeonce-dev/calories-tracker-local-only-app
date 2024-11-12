@@ -1,4 +1,16 @@
-import { Schema } from "effect";
+import { Either, Schema } from "effect";
+
+const DailyLogDateType = Symbol.for("@@DailyLogDate");
+export const DailyLogDate = Schema.NonEmptyString.pipe(
+  Schema.filter((str, options) =>
+    Schema.decodeEither(Schema.DateFromString)(str, options).pipe(
+      Either.flip,
+      Either.map((error) => error.issue),
+      Either.getOrUndefined
+    )
+  ),
+  Schema.brand(DailyLogDateType)
+);
 
 export const Meal = Schema.Literal("breakfast", "lunch", "dinner", "snacks");
 
