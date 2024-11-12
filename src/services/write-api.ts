@@ -7,7 +7,7 @@ import {
   servingTable,
 } from "~/schema/drizzle";
 import { FoodInsert } from "~/schema/food";
-import { PlanInsert } from "~/schema/plan";
+import { _PlanInsert } from "~/schema/plan";
 import { ServingInsert } from "~/schema/serving";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
@@ -32,7 +32,7 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
       ),
 
       createPlan: flow(
-        Schema.decode(PlanInsert),
+        Schema.decode(_PlanInsert.WithValidation),
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap((values) =>
           query((_) =>

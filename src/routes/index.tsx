@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMachine } from "@xstate/react";
 import { Effect, Option } from "effect";
-import { Button, Form, Group } from "react-aria-components";
-import { NumberField } from "~/components/NumberField";
-import { Input, Label } from "~/components/TextField";
+import { Button, Form } from "react-aria-components";
+import QuantityField from "~/components/QuantityField";
 import { machine } from "~/machines/create-plan";
+import { _PlanInsert } from "~/schema/plan";
 import { Migrations } from "~/services/migrations";
 import { Profile } from "~/services/profile";
 import { RuntimeClient } from "~/services/runtime-client";
@@ -37,7 +37,6 @@ export const Route = createFileRoute("/")({
 
 function HomeComponent() {
   const [snapshot, send] = useMachine(machine);
-  const canCreatePlan = snapshot.can({ type: "plan.create" });
 
   if (snapshot.matches("Created")) {
     return <p>Plan created!</p>;
@@ -51,76 +50,41 @@ function HomeComponent() {
           send({ type: "plan.create" });
         }}
       >
-        <NumberField
+        <QuantityField
+          actor={snapshot.context.calories}
+          schema={_PlanInsert.fields.calories}
+          label="Calories"
           name="calories"
-          step={10}
-          minValue={100}
-          value={snapshot.context.calories}
-          onChange={(value) => send({ type: "calories.update", value })}
-        >
-          <Label>Calories</Label>
-          <Group>
-            <Button slot="decrement">-</Button>
-            <Input />
-            <Button slot="increment">+</Button>
-          </Group>
-        </NumberField>
-        <NumberField
-          name="fats"
-          step={1}
-          minValue={0}
-          maxValue={100}
-          value={snapshot.context.fatsRatio}
-          onChange={(value) => send({ type: "ratio.fats.update", value })}
-        >
-          <Label>Fats</Label>
-          <Group>
-            <Button slot="decrement">-</Button>
-            <Input />
-            <Button slot="increment">+</Button>
-          </Group>
-        </NumberField>
-        <NumberField
-          name="proteins"
-          step={1}
-          minValue={0}
-          maxValue={100}
-          value={snapshot.context.proteinsRatio}
-          onChange={(value) => send({ type: "ratio.proteins.update", value })}
-        >
-          <Label>Proteins</Label>
-          <Group>
-            <Button slot="decrement">-</Button>
-            <Input />
-            <Button slot="increment">+</Button>
-          </Group>
-        </NumberField>
-        <NumberField
-          name="carbohydrates"
-          step={1}
-          minValue={0}
-          maxValue={100}
-          value={snapshot.context.carbohydratesRatio}
-          onChange={(value) =>
-            send({ type: "ratio.carbohydrates.update", value })
-          }
-        >
-          <Label>Carbohydrates</Label>
-          <Group>
-            <Button slot="decrement">-</Button>
-            <Input />
-            <Button slot="increment">+</Button>
-          </Group>
-        </NumberField>
+        />
 
-        <Button
-          type="submit"
-          isDisabled={!canCreatePlan || snapshot.matches("CreatingPlan")}
-        >
+        <QuantityField
+          actor={snapshot.context.carbohydratesRatio}
+          schema={_PlanInsert.fields.carbohydratesRatio}
+          label="Carbohydrates Ratio"
+          name="carbohydrates"
+        />
+
+        <QuantityField
+          actor={snapshot.context.proteinsRatio}
+          schema={_PlanInsert.fields.proteinsRatio}
+          label="Proteins Ratio"
+          name="proteins"
+        />
+
+        <QuantityField
+          actor={snapshot.context.fatsRatio}
+          schema={_PlanInsert.fields.fatsRatio}
+          label="Fats Ratio"
+          name="fats"
+        />
+
+        <Button type="submit" isDisabled={snapshot.matches("CreatingPlan")}>
           Submit
         </Button>
 
-        {!canCreatePlan && <p>Macros ratio must be 100%</p>}
+        {snapshot.context.submitError !== null && (
+          <p>{snapshot.context.submitError}</p>
+        )}
       </Form>
     </main>
   );

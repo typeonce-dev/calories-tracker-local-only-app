@@ -1,48 +1,38 @@
 import { Effect } from "effect";
-import { assign, fromPromise, setup } from "xstate";
+import { assign, fromPromise, setup, type ActorRefFrom } from "xstate";
 import { Profile } from "~/services/profile";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
+import { numberFieldMachine } from "./number-field";
+
+interface Context {
+  calories: ActorRefFrom<typeof numberFieldMachine>;
+  fatsRatio: ActorRefFrom<typeof numberFieldMachine>;
+  carbohydratesRatio: ActorRefFrom<typeof numberFieldMachine>;
+  proteinsRatio: ActorRefFrom<typeof numberFieldMachine>;
+  submitError: string | null;
+}
 
 export const machine = setup({
   types: {
-    context: {} as {
-      calories: number;
-      fatsRatio: number;
-      carbohydratesRatio: number;
-      proteinsRatio: number;
-      submitError: string | null;
-    },
-    events: {} as
-      | { type: "calories.update"; value: number }
-      | { type: "ratio.fats.update"; value: number }
-      | { type: "ratio.carbohydrates.update"; value: number }
-      | { type: "ratio.proteins.update"; value: number }
-      | { type: "plan.create" },
-  },
-  guards: {
-    canCreatePlan: ({ context }) =>
-      context.carbohydratesRatio + context.fatsRatio + context.proteinsRatio ===
-      100,
+    context: {} as Context,
+    events: {} as { type: "plan.create" },
   },
   actors: {
     createPlan: fromPromise(
-      ({
-        input,
-      }: {
-        input: {
-          calories: number;
-          fatsRatio: number;
-          carbohydratesRatio: number;
-          proteinsRatio: number;
-        };
-      }) =>
+      ({ input }: { input: Omit<Context, "submitError"> }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
             const api = yield* WriteApi;
             const profile = yield* Profile;
 
-            const { id } = yield* api.createPlan(input);
+            const { id } = yield* api.createPlan({
+              calories: input.calories.getSnapshot().context.value,
+              fatsRatio: input.fatsRatio.getSnapshot().context.value,
+              proteinsRatio: input.proteinsRatio.getSnapshot().context.value,
+              carbohydratesRatio:
+                input.carbohydratesRatio.getSnapshot().context.value,
+            });
             yield* profile.setCurrentPlanId(id);
           })
         )
@@ -50,32 +40,19 @@ export const machine = setup({
   },
 }).createMachine({
   id: "create-plan",
-  context: {
-    calories: 2000,
-    fatsRatio: 20,
-    carbohydratesRatio: 40,
-    proteinsRatio: 40,
+  context: ({ spawn }) => ({
+    calories: spawn(numberFieldMachine),
+    fatsRatio: spawn(numberFieldMachine),
+    carbohydratesRatio: spawn(numberFieldMachine),
+    proteinsRatio: spawn(numberFieldMachine),
     submitError: null,
-  },
+  }),
   initial: "Idle",
   states: {
     Idle: {
       on: {
-        "calories.update": {
-          actions: assign(({ event }) => ({ calories: event.value })),
-        },
-        "ratio.fats.update": {
-          actions: assign(({ event }) => ({ fatsRatio: event.value })),
-        },
-        "ratio.carbohydrates.update": {
-          actions: assign(({ event }) => ({ carbohydratesRatio: event.value })),
-        },
-        "ratio.proteins.update": {
-          actions: assign(({ event }) => ({ proteinsRatio: event.value })),
-        },
         "plan.create": {
           target: "CreatingPlan",
-          guard: "canCreatePlan",
           actions: assign({ submitError: null }),
         },
       },
