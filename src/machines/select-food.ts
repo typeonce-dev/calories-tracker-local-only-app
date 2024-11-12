@@ -6,6 +6,7 @@ import {
   setup,
   type ActorRefFrom,
 } from "xstate";
+import { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
@@ -25,19 +26,19 @@ export const machine = setup({
       | {
           type: "quantity.confirm";
           meal: typeof Meal.Type;
-          dailyLogDate: string;
+          dailyLogDate: typeof DailyLogSelect.fields.date.Type;
         },
   },
   actors: {
     createServing: fromPromise(
       ({
-        input: { foodId, quantity, ...input },
+        input: { foodId, quantity, dailyLogDate, ...input },
       }: {
         input: {
           foodId: Context["foodId"];
           quantity: Context["quantity"];
           meal: typeof Meal.Type;
-          dailyLogDate: string;
+          dailyLogDate: typeof DailyLogSelect.fields.date.Type;
         };
       }) =>
         RuntimeClient.runPromise(
@@ -51,6 +52,7 @@ export const machine = setup({
             yield* api.createServing({
               foodId,
               quantity: quantity.getSnapshot().context.value,
+              dailyLogDate: DailyLogSelect.formatDate(dailyLogDate),
               ...input,
             });
           })

@@ -1,5 +1,6 @@
 import { useLiveQuery } from "@electric-sql/pglite-react";
 import { eq, sql as sqlOrm } from "drizzle-orm";
+import { DailyLogSelect } from "~/schema/daily-log";
 import { foodTable, servingTable } from "~/schema/drizzle";
 import { usePgliteDrizzle } from "./use-pglite-drizzle";
 
@@ -16,7 +17,7 @@ interface ServingFood {
   proteins: (typeof foodTable.$inferSelect)["proteins"];
 }
 
-export const useDailyLog = (date: string) => {
+export const useDailyLog = (date: typeof DailyLogSelect.fields.date.Type) => {
   const orm = usePgliteDrizzle();
   const query = orm
     .select({
@@ -32,7 +33,7 @@ export const useDailyLog = (date: string) => {
       proteins: foodTable.proteins,
     })
     .from(servingTable)
-    .where(eq(servingTable.dailyLogDate, date))
+    .where(eq(servingTable.dailyLogDate, DailyLogSelect.formatDate(date)))
     .leftJoin(foodTable, eq(servingTable.foodId, foodTable.id));
   const { params, sql } = query.toSQL();
   return useLiveQuery<ServingFood>(sql, params);

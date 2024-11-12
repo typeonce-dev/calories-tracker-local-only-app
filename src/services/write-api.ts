@@ -1,5 +1,5 @@
-import { Data, Effect, flow, Schema } from "effect";
-import { DailyLogInsert } from "~/schema/daily-log";
+import { Data, DateTime, Effect, flow, Schema } from "effect";
+import { DailyLogInsert, DailyLogSelect } from "~/schema/daily-log";
 import {
   dailyLogTable,
   foodTable,
@@ -24,11 +24,19 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Schema.decode(DailyLogInsert),
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap((values) =>
-          query((_) => _.insert(dailyLogTable).values(values).returning())
+          query((_) =>
+            _.insert(dailyLogTable)
+              .values({
+                ...values,
+                date: DateTime.formatIsoDateUtc(values.date),
+              })
+              .returning()
+          )
         ),
         singleResult(
           () => new WriteApiError({ cause: "Daily log not created" })
-        )
+        ),
+        Effect.flatMap(Schema.decode(DailyLogSelect))
       ),
 
       createPlan: flow(
@@ -46,7 +54,12 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Schema.decode(ServingInsert),
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap((values) =>
-          query((_) => _.insert(servingTable).values(values))
+          query((_) =>
+            _.insert(servingTable).values({
+              ...values,
+              dailyLogDate: DailyLogSelect.formatDate(values.dailyLogDate),
+            })
+          )
         )
       ),
 

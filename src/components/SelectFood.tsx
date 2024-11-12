@@ -3,6 +3,7 @@ import { Match } from "effect";
 import { Button } from "react-aria-components";
 import { useFoods } from "~/hooks/use-foods";
 import { machine } from "~/machines/select-food";
+import type { DailyLogSelect } from "~/schema/daily-log";
 import { ServingInsert } from "~/schema/serving";
 import type { Meal } from "~/schema/shared";
 import CreateFood from "./CreateFood";
@@ -15,7 +16,7 @@ export default function SelectFood({
   dailyLogDate,
 }: {
   meal: typeof Meal.Type;
-  dailyLogDate: string;
+  dailyLogDate: typeof DailyLogSelect.fields.date.Type;
 }) {
   const [snapshot, send] = useMachine(machine);
   const foods = useFoods();

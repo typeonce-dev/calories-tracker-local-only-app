@@ -1,9 +1,17 @@
-import { Schema } from "effect";
-import { DailyLogDate } from "./shared";
+import { DateTime, Schema } from "effect";
 
 export class DailyLogInsert extends Schema.Class<DailyLogInsert>(
   "DailyLogInsert"
 )({
-  date: DailyLogDate,
+  date: Schema.DateTimeUtcFromSelf,
   planId: Schema.Number,
 }) {}
+
+export class DailyLogSelect extends Schema.Class<DailyLogSelect>(
+  "DailyLogSelect"
+)({
+  date: Schema.DateTimeUtc,
+  planId: Schema.Number,
+}) {
+  static readonly formatDate = DateTime.formatIsoDateUtc;
+}
