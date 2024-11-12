@@ -60,6 +60,10 @@ export default function SelectFood({
                     >
                       Confirm
                     </Button>
+
+                    {snapshot.context.submitError !== null && (
+                      <p>{snapshot.context.submitError}</p>
+                    )}
                   </div>
                 )),
                 Match.when("Creating", () => <p>...</p>),

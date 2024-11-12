@@ -12,6 +12,7 @@ import { WriteApi } from "~/services/write-api";
 import { numberFieldMachine } from "./number-field";
 
 interface Context {
+  submitError: string | null;
   foodId: number | null;
   quantity: ActorRefFrom<typeof numberFieldMachine>;
 }
@@ -32,7 +33,9 @@ export const machine = setup({
       ({
         input: { foodId, quantity, ...input },
       }: {
-        input: Context & {
+        input: {
+          foodId: Context["foodId"];
+          quantity: Context["quantity"];
           meal: typeof Meal.Type;
           dailyLogDate: string;
         };
@@ -57,6 +60,7 @@ export const machine = setup({
 }).createMachine({
   id: "select-food",
   context: ({ spawn }) => ({
+    submitError: null,
     foodId: null,
     quantity: spawn(numberFieldMachine),
   }),
@@ -78,6 +82,7 @@ export const machine = setup({
       on: {
         "quantity.confirm": {
           target: "Creating",
+          actions: assign({ submitError: null }),
         },
       },
     },
@@ -86,15 +91,22 @@ export const machine = setup({
         src: "createServing",
         input: ({ context, event }) => {
           assertEvent(event, "quantity.confirm");
-          // TODO: Avoid null assertion
           return {
-            foodId: context.foodId!,
-            quantity: context.quantity!,
+            foodId: context.foodId,
+            quantity: context.quantity,
             meal: event.meal,
             dailyLogDate: event.dailyLogDate,
           };
         },
-        onError: { target: "Selected" },
+        onError: {
+          target: "Selected",
+          actions: assign(({ event }) => ({
+            submitError:
+              event.error instanceof Error
+                ? event.error.message
+                : "Unknown error",
+          })),
+        },
         onDone: { target: "Created" },
       },
     },
