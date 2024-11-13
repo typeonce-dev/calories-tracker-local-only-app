@@ -4,6 +4,7 @@ import { useDailyLog } from "~/hooks/use-daily-log";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { Meal } from "~/schema/shared";
 import SelectFood from "./SelectFood";
+import ServingCard from "./ServingCard";
 
 export default function DailyLogOverview({
   date,
@@ -35,15 +36,8 @@ export default function DailyLogOverview({
               {dailyLog?.rows
                 .filter((log) => log.meal === meal)
                 .map((log) => (
-                  <li key={log.id} className="p-2 border border-slate-300">
-                    <p className="font-bold">{log.name}</p>
-                    <p>{log.quantity}g</p>
-                    <p>{(log.quantity / 100) * log.calories}kcal</p>
-                    <p>
-                      {(log.quantity / 100) * log.carbohydrates}carbohydrates
-                    </p>
-                    <p>{(log.quantity / 100) * log.fats}fats</p>
-                    <p>{(log.quantity / 100) * log.proteins}proteins</p>
+                  <li key={log.id}>
+                    <ServingCard log={log} />
                   </li>
                 ))}
             </ul>

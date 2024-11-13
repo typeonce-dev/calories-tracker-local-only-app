@@ -10,3 +10,16 @@ export class ServingInsert extends Schema.Class<ServingInsert>("ServingInsert")(
     dailyLogDate: DailyLogSelect.fields.date,
   }
 ) {}
+
+export class ServingUpdate extends Schema.Class<ServingUpdate>("ServingUpdate")(
+  {
+    id: Schema.Number,
+    quantity: Schema.Positive,
+  }
+) {}
+
+export class ServingRemove extends Schema.Class<ServingRemove>("ServingRemove")(
+  {
+    id: Schema.Number,
+  }
+) {}

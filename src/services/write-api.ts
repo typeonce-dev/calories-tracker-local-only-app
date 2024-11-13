@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { Data, DateTime, Effect, flow, Schema } from "effect";
 import { DailyLogInsert, DailyLogSelect } from "~/schema/daily-log";
 import {
@@ -8,7 +9,7 @@ import {
 } from "~/schema/drizzle";
 import { FoodInsert } from "~/schema/food";
 import { _PlanInsert } from "~/schema/plan";
-import { ServingInsert } from "~/schema/serving";
+import { ServingInsert, ServingRemove, ServingUpdate } from "~/schema/serving";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
 
@@ -68,6 +69,26 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap((values) =>
           query((_) => _.insert(foodTable).values(values))
+        )
+      ),
+
+      updateServing: flow(
+        Schema.decode(ServingUpdate),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap(({ id, quantity }) =>
+          query((_) =>
+            _.update(servingTable)
+              .set({ quantity })
+              .where(eq(servingTable.id, id))
+          )
+        )
+      ),
+
+      removeServing: flow(
+        Schema.decode(ServingRemove),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap(({ id }) =>
+          query((_) => _.delete(servingTable).where(eq(servingTable.id, id)))
         )
       ),
     };

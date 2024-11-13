@@ -3,19 +3,7 @@ import { eq, sql as sqlOrm } from "drizzle-orm";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { foodTable, servingTable } from "~/schema/drizzle";
 import { usePgliteDrizzle } from "./use-pglite-drizzle";
-
-interface ServingFood {
-  id: (typeof servingTable.$inferSelect)["id"];
-  meal: (typeof servingTable.$inferSelect)["meal"];
-  quantity: (typeof servingTable.$inferSelect)["quantity"];
-  foodId: (typeof foodTable.$inferSelect)["id"];
-  name: (typeof foodTable.$inferSelect)["name"];
-  brand: (typeof foodTable.$inferSelect)["brand"];
-  calories: (typeof foodTable.$inferSelect)["calories"];
-  fats: (typeof foodTable.$inferSelect)["fats"];
-  carbohydrates: (typeof foodTable.$inferSelect)["carbohydrates"];
-  proteins: (typeof foodTable.$inferSelect)["proteins"];
-}
+import type { ServingFood } from "~/type";
 
 export const useDailyLog = (date: typeof DailyLogSelect.fields.date.Type) => {
   const orm = usePgliteDrizzle();
