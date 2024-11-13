@@ -26,10 +26,20 @@ export default function ServingCard({ log }: { log: ServingFood }) {
         />
       </Group>
       <Group>
-        <Button onPress={() => send({ type: "serving.remove", id: log.id })}>
+        <Button
+          isDisabled={
+            snapshot.matches("Updating") || snapshot.matches("Removing")
+          }
+          onPress={() => send({ type: "serving.remove", id: log.id })}
+        >
           Remove
         </Button>
-        <Button onPress={() => send({ type: "serving.update", id: log.id })}>
+        <Button
+          isDisabled={
+            snapshot.matches("Updating") || snapshot.matches("Removing")
+          }
+          onPress={() => send({ type: "serving.update", id: log.id })}
+        >
           Update
         </Button>
       </Group>

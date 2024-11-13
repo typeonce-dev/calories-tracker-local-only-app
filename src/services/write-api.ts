@@ -8,7 +8,7 @@ import {
   servingTable,
 } from "~/schema/drizzle";
 import { FoodInsert } from "~/schema/food";
-import { _PlanInsert } from "~/schema/plan";
+import { _PlanInsert, _PlanUpdate } from "~/schema/plan";
 import { ServingInsert, ServingRemove, ServingUpdate } from "~/schema/serving";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
@@ -80,6 +80,16 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
             _.update(servingTable)
               .set({ quantity })
               .where(eq(servingTable.id, id))
+          )
+        )
+      ),
+
+      updatePlan: flow(
+        Schema.decode(_PlanUpdate.WithValidation),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap(({ id, ...values }) =>
+          query((_) =>
+            _.update(planTable).set(values).where(eq(planTable.id, id))
           )
         )
       ),
