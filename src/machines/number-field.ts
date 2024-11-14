@@ -15,5 +15,7 @@ export const numberFieldMachine = fromTransition(
       Match.exhaustive
     ) satisfies Partial<Context>),
   }),
-  { value: 0 }
+  ({ input }: { input?: { initialValue?: number } }) => ({
+    value: input?.initialValue ?? 0,
+  })
 );

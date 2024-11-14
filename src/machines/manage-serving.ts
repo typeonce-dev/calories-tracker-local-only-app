@@ -38,13 +38,11 @@ export const machine = setup({
   },
 }).createMachine({
   id: "manage-serving",
-  context: ({ spawn, input }) => {
-    const machineQuantity = spawn(numberFieldMachine);
-    machineQuantity.send({ type: "update", value: input.quantity });
-    return {
-      quantity: machineQuantity,
-    };
-  },
+  context: ({ spawn, input }) => ({
+    quantity: spawn(numberFieldMachine, {
+      input: { initialValue: input.quantity },
+    }),
+  }),
   initial: "Idle",
   states: {
     Idle: {

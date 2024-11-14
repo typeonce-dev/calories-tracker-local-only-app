@@ -55,26 +55,20 @@ export const machine = setup({
   },
 }).createMachine({
   id: "manage-serving",
-  context: ({ spawn, input }) => {
-    const machineCalories = spawn(numberFieldMachine);
-    const machineFatsRatio = spawn(numberFieldMachine);
-    const machineCarbohydratesRatio = spawn(numberFieldMachine);
-    const machineProteinsRatio = spawn(numberFieldMachine);
-
-    machineCalories.send({ type: "update", value: input.calories });
-    machineFatsRatio.send({ type: "update", value: input.fatsRatio });
-    machineCarbohydratesRatio.send({
-      type: "update",
-      value: input.carbohydratesRatio,
-    });
-    machineProteinsRatio.send({ type: "update", value: input.proteinsRatio });
-    return {
-      calories: machineCalories,
-      carbohydratesRatio: machineCarbohydratesRatio,
-      fatsRatio: machineFatsRatio,
-      proteinsRatio: machineProteinsRatio,
-    };
-  },
+  context: ({ spawn, input }) => ({
+    calories: spawn(numberFieldMachine, {
+      input: { initialValue: input.calories },
+    }),
+    carbohydratesRatio: spawn(numberFieldMachine, {
+      input: { initialValue: input.carbohydratesRatio },
+    }),
+    fatsRatio: spawn(numberFieldMachine, {
+      input: { initialValue: input.fatsRatio },
+    }),
+    proteinsRatio: spawn(numberFieldMachine, {
+      input: { initialValue: input.proteinsRatio },
+    }),
+  }),
   initial: "Idle",
   states: {
     Idle: {
