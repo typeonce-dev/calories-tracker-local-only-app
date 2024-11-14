@@ -1,8 +1,9 @@
 import { useMachine } from "@xstate/react";
-import { Button, Form, Group } from "react-aria-components";
+import { Button, Form } from "react-aria-components";
 import { machine } from "~/machines/manage-plan";
 import { _PlanUpdate } from "~/schema/plan";
 import type { PlanWithLogsCount } from "~/type";
+import PlanInfo from "./PlanInfo";
 import QuantityField from "./QuantityField";
 
 export default function PlanCard({ plan }: { plan: PlanWithLogsCount }) {
@@ -17,12 +18,7 @@ export default function PlanCard({ plan }: { plan: PlanWithLogsCount }) {
   return (
     <div className="p-2 border border-slate-300">
       <p>{plan.logs} days</p>
-      <p>{plan.calories}</p>
-      <Group>
-        <p>{plan.carbohydratesRatio}</p>
-        <p>{plan.proteinsRatio}</p>
-        <p>{plan.fatsRatio}</p>
-      </Group>
+      <PlanInfo plan={plan} />
 
       <Form
         onSubmit={(event) => {

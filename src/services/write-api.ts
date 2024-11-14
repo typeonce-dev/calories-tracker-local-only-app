@@ -1,6 +1,10 @@
 import { eq } from "drizzle-orm";
 import { Data, DateTime, Effect, flow, Schema } from "effect";
-import { DailyLogInsert, DailyLogSelect } from "~/schema/daily-log";
+import {
+  DailyLogInsert,
+  DailyLogSelect,
+  DailyLogUpdate,
+} from "~/schema/daily-log";
 import {
   dailyLogTable,
   foodTable,
@@ -90,6 +94,18 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Effect.flatMap(({ id, ...values }) =>
           query((_) =>
             _.update(planTable).set(values).where(eq(planTable.id, id))
+          )
+        )
+      ),
+
+      updateDailyLog: flow(
+        Schema.decode(DailyLogUpdate),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap(({ date, ...values }) =>
+          query((_) =>
+            _.update(dailyLogTable)
+              .set(values)
+              .where(eq(dailyLogTable.date, DailyLogSelect.formatDate(date)))
           )
         )
       ),

@@ -15,3 +15,10 @@ export class DailyLogSelect extends Schema.Class<DailyLogSelect>(
 }) {
   static readonly formatDate = DateTime.formatIsoDateUtc;
 }
+
+export class DailyLogUpdate extends Schema.Class<DailyLogUpdate>(
+  "DailyLogUpdate"
+)({
+  date: Schema.DateTimeUtcFromSelf,
+  planId: Schema.Number,
+}) {}

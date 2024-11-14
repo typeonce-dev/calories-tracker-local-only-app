@@ -4,7 +4,7 @@ import { useDailyLog } from "~/hooks/use-daily-log";
 import { useDailyPlan } from "~/hooks/use-daily-plan";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { Meal } from "~/schema/shared";
-import DailyPlan from "./DailyPlan";
+import DailyPlanCard from "./DailyPlanCard";
 import SelectFood from "./SelectFood";
 import ServingCard from "./ServingCard";
 
@@ -31,7 +31,7 @@ export default function DailyLogOverview({
         </Link>
       </div>
       {dailyPlan !== undefined ? (
-        <DailyPlan plan={dailyPlan} />
+        <DailyPlanCard plan={dailyPlan} date={date} />
       ) : (
         <p>No plan</p>
       )}
