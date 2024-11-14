@@ -1,5 +1,5 @@
 {
-  "id": "cfe2fea3-0883-44c8-9b16-be76c3328698",
+  "id": "f7af2b77-1759-4d7c-9d46-725c0fc3a7a5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -18,7 +18,7 @@
           "name": "plan_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -197,6 +197,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "isCurrent": {
+          "name": "isCurrent",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
@@ -245,13 +252,13 @@
           "name": "food_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "daily_log_date": {
           "name": "daily_log_date",
           "type": "date",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -283,6 +290,26 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.system": {
+      "name": "system",
+      "schema": "",
+      "columns": {
+        "version": {
+          "name": "version",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

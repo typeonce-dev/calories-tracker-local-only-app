@@ -3,6 +3,7 @@ import { Button, Form } from "react-aria-components";
 import { machine } from "~/machines/manage-plan";
 import { _PlanUpdate } from "~/schema/plan";
 import type { PlanWithLogsCount } from "~/type";
+import { cn } from "~/utils";
 import PlanInfo from "./PlanInfo";
 import QuantityField from "./QuantityField";
 
@@ -16,7 +17,12 @@ export default function PlanCard({ plan }: { plan: PlanWithLogsCount }) {
     },
   });
   return (
-    <div className="p-2 border border-slate-300">
+    <div
+      className={cn(
+        plan.isCurrent && "bg-slate-200",
+        "p-2 border border-slate-300"
+      )}
+    >
       <p>{plan.logs} days</p>
       <PlanInfo plan={plan} />
 
@@ -58,6 +64,14 @@ export default function PlanCard({ plan }: { plan: PlanWithLogsCount }) {
           Update
         </Button>
       </Form>
+
+      <Button
+        type="button"
+        isDisabled={snapshot.matches("Setting")}
+        onPress={() => send({ type: "plan.set", id: plan.id })}
+      >
+        Set as current plan
+      </Button>
 
       {plan.logs === 0 && (
         <Button

@@ -20,7 +20,8 @@ export const machine = setup({
     },
     events: {} as
       | { type: "plan.update"; id: number }
-      | { type: "plan.remove"; id: number },
+      | { type: "plan.remove"; id: number }
+      | { type: "plan.set"; id: number },
   },
   actors: {
     updatePlan: fromPromise(
@@ -52,6 +53,15 @@ export const machine = setup({
         }).pipe(Effect.tapErrorCause(Effect.logError))
       )
     ),
+    setAsCurrentPlan: fromPromise(({ input }: { input: { id: number } }) =>
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const api = yield* WriteApi;
+          yield* Effect.log(input);
+          yield* api.updateCurrentPlan(input.id);
+        }).pipe(Effect.tapErrorCause(Effect.logError))
+      )
+    ),
   },
 }).createMachine({
   id: "manage-serving",
@@ -79,6 +89,9 @@ export const machine = setup({
         "plan.remove": {
           target: "Removing",
         },
+        "plan.set": {
+          target: "Setting",
+        },
       },
     },
     Updating: {
@@ -104,6 +117,17 @@ export const machine = setup({
         src: "removePlan",
         input: ({ event }) => {
           assertEvent(event, "plan.remove");
+          return { id: event.id };
+        },
+        onError: { target: "Idle" },
+        onDone: { target: "Idle" },
+      },
+    },
+    Setting: {
+      invoke: {
+        src: "setAsCurrentPlan",
+        input: ({ event }) => {
+          assertEvent(event, "plan.set");
           return { id: event.id };
         },
         onError: { target: "Idle" },

@@ -1,5 +1,5 @@
 // @ts-expect-error: import
-import v0000 from "../drizzle/0000_illegal_jamie_braddock.sql?raw";
+import v0000 from "../drizzle/0000_third_wendigo.sql?raw";
 
 import type { PGlite } from "@electric-sql/pglite";
 import { Data, Effect } from "effect";
@@ -18,9 +18,7 @@ const execute = (client: PGlite) => (sql: string) =>
 export class Migrations extends Effect.Service<Migrations>()("Migrations", {
   effect: Effect.gen(function* () {
     const db = yield* Pglite;
-    return {
-      0: execute(db.client)(v0000),
-    };
+    return [execute(db.client)(v0000)] as const;
   }),
   dependencies: [Pglite.Default],
 }) {}

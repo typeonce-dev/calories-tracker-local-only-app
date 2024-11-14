@@ -1,6 +1,5 @@
 import { Effect } from "effect";
 import { assign, fromPromise, setup, type ActorRefFrom } from "xstate";
-import { Profile } from "~/services/profile";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
 import { numberFieldMachine } from "./number-field";
@@ -24,7 +23,6 @@ export const machine = setup({
         RuntimeClient.runPromise(
           Effect.gen(function* () {
             const api = yield* WriteApi;
-            const profile = yield* Profile;
 
             const { id } = yield* api.createPlan({
               calories: input.calories.getSnapshot().context.value,
@@ -33,7 +31,7 @@ export const machine = setup({
               carbohydratesRatio:
                 input.carbohydratesRatio.getSnapshot().context.value,
             });
-            yield* profile.setCurrentPlanId(id);
+            yield* api.updateCurrentPlan(id);
           })
         )
     ),

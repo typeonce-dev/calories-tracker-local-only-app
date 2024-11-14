@@ -13,6 +13,7 @@ export const useDailyPlan = (date: typeof DailyLogSelect.fields.date.Type) => {
       fatsRatio: planTable.fatsRatio,
       carbohydratesRatio: planTable.carbohydratesRatio,
       proteinsRatio: planTable.proteinsRatio,
+      isCurrent: planTable.isCurrent,
     })
     .from(planTable)
     .groupBy(planTable.id)

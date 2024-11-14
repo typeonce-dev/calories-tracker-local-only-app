@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Effect, Option } from "effect";
+import { Effect } from "effect";
 import CreatePlan from "~/components/CreatePlan";
 import PlanCard from "~/components/PlanCard";
 import { usePlans } from "~/hooks/use-plans";
 import { Migrations } from "~/services/migrations";
-import { Profile } from "~/services/profile";
+import { ReadApi } from "~/services/read-api";
 import { RuntimeClient } from "~/services/runtime-client";
+import { WriteApi } from "~/services/write-api";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -13,21 +14,30 @@ export const Route = createFileRoute("/")({
     RuntimeClient.runPromise(
       Effect.gen(function* () {
         const migrations = yield* Migrations;
-        const profile = yield* Profile;
+        const readApi = yield* ReadApi;
+        const api = yield* WriteApi;
 
-        const dbVersion = yield* profile.dbVersion;
+        const latestMigration = migrations.length;
+        const { version } = yield* readApi.getSystem.pipe(
+          Effect.catchTags({
+            PgliteError: () => Effect.succeed({ version: 0 }), // No db yet
+          })
+        );
 
-        if (Option.isNone(dbVersion)) {
-          yield* migrations[0];
-          yield* profile.setDbVersion(0);
-          yield* Effect.log("Startup database");
-        } else {
-          if (dbVersion.value > 0) {
-            yield* profile.setDbVersion(0);
-          }
+        // Make this step reversible, they must both complete, or none (`acquireRelease`)
+        yield* Effect.all(migrations.slice(version));
 
-          yield* Effect.log("Migrations done, version " + dbVersion.value);
+        if (version === 0) {
+          yield* api.createSystem;
         }
+
+        yield* api.updateSystemVersion(latestMigration);
+
+        yield* Effect.log(
+          version === latestMigration
+            ? "Database up to date"
+            : `Migrations done (from ${version} to ${latestMigration})`
+        );
       }).pipe(Effect.tapErrorCause(Effect.logError))
     ),
   errorComponent: () => <p>Error loading migrations</p>,

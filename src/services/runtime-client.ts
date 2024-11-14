@@ -1,7 +1,6 @@
 import { ConfigProvider, Layer, ManagedRuntime } from "effect";
 import { Migrations } from "./migrations";
 import { Pglite } from "./pglite";
-import { Profile } from "./profile";
 import { ReadApi } from "./read-api";
 import { WriteApi } from "./write-api";
 
@@ -13,7 +12,6 @@ const MainLayer = Layer.mergeAll(
   WriteApi.Default,
   ReadApi.Default,
   Migrations.Default,
-  Profile.Default,
   Pglite.Default
 ).pipe(Layer.provide(CustomConfigProvider));
 

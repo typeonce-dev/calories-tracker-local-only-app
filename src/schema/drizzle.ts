@@ -1,4 +1,5 @@
 import {
+  boolean,
   date,
   index,
   integer,
@@ -54,6 +55,7 @@ export const planTable = pgTable("plan", {
   fatsRatio: integer().notNull(),
   carbohydratesRatio: integer().notNull(),
   proteinsRatio: integer().notNull(),
+  isCurrent: boolean().notNull().default(false),
 });
 
 export const dailyLogTable = pgTable("daily_log", {
@@ -61,4 +63,8 @@ export const dailyLogTable = pgTable("daily_log", {
   planId: integer("plan_id")
     .references(() => planTable.id)
     .notNull(),
+});
+
+export const systemTable = pgTable("system", {
+  version: integer().notNull().default(0),
 });

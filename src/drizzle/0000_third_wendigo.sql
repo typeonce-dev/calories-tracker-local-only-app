@@ -1,7 +1,7 @@
 CREATE TYPE "public"."meal" AS ENUM('breakfast', 'lunch', 'dinner', 'snacks');--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "daily_log" (
 	"date" date PRIMARY KEY NOT NULL,
-	"plan_id" integer
+	"plan_id" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "food" (
@@ -23,15 +23,20 @@ CREATE TABLE IF NOT EXISTS "plan" (
 	"calories" integer NOT NULL,
 	"fatsRatio" integer NOT NULL,
 	"carbohydratesRatio" integer NOT NULL,
-	"proteinsRatio" integer NOT NULL
+	"proteinsRatio" integer NOT NULL,
+	"isCurrent" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "serving" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "serving_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"meal" "meal" NOT NULL,
 	"quantity" integer NOT NULL,
-	"food_id" integer,
-	"daily_log_date" date
+	"food_id" integer NOT NULL,
+	"daily_log_date" date NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "system" (
+	"version" integer DEFAULT 0 NOT NULL
 );
 --> statement-breakpoint
 DO $$ BEGIN

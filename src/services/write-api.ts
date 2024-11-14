@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, not } from "drizzle-orm";
 import { Data, DateTime, Effect, flow, Schema } from "effect";
 import {
   DailyLogInsert,
@@ -10,6 +10,7 @@ import {
   foodTable,
   planTable,
   servingTable,
+  systemTable,
 } from "~/schema/drizzle";
 import { FoodInsert } from "~/schema/food";
 import { _PlanInsert, _PlanUpdate, PlanRemove } from "~/schema/plan";
@@ -76,6 +77,12 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         )
       ),
 
+      createSystem: query((_) =>
+        _.insert(systemTable).values({ version: 0 }).returning()
+      ).pipe(
+        singleResult(() => new WriteApiError({ cause: "System not created" }))
+      ),
+
       updateServing: flow(
         Schema.decode(ServingUpdate),
         Effect.mapError((error) => new WriteApiError({ cause: error })),
@@ -94,6 +101,28 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Effect.flatMap(({ id, ...values }) =>
           query((_) =>
             _.update(planTable).set(values).where(eq(planTable.id, id))
+          )
+        )
+      ),
+
+      updateCurrentPlan: flow(
+        Schema.decode(Schema.Number),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap((id) =>
+          Effect.all(
+            [
+              query((_) =>
+                _.update(planTable)
+                  .set({ isCurrent: false })
+                  .where(not(eq(planTable.id, id)))
+              ),
+              query((_) =>
+                _.update(planTable)
+                  .set({ isCurrent: true })
+                  .where(eq(planTable.id, id))
+              ),
+            ],
+            { concurrency: "unbounded" }
           )
         )
       ),
@@ -123,6 +152,15 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap(({ id }) =>
           query((_) => _.delete(planTable).where(eq(planTable.id, id)))
+        )
+      ),
+
+      updateSystemVersion: flow(
+        Schema.decode(Schema.Positive),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap((version) =>
+          // Single row or multiple?
+          query((_) => _.update(systemTable).set({ version }))
         )
       ),
     };

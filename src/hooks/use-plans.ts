@@ -13,6 +13,7 @@ export const usePlans = () => {
       fatsRatio: planTable.fatsRatio,
       carbohydratesRatio: planTable.carbohydratesRatio,
       proteinsRatio: planTable.proteinsRatio,
+      isCurrent: planTable.isCurrent,
       logs: count(dailyLogTable.date).as("logs"),
     })
     .from(planTable)

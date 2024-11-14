@@ -8,7 +8,6 @@ import {
 } from "xstate";
 import { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
-import { Profile } from "~/services/profile";
 import { ReadApi } from "~/services/read-api";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
@@ -45,7 +44,6 @@ export const machine = setup({
       }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const profile = yield* Profile;
             const readApi = yield* ReadApi;
             const api = yield* WriteApi;
 
@@ -56,8 +54,10 @@ export const machine = setup({
             return yield* readApi.getCurrentDateLog(dailyLogDate).pipe(
               Effect.catchTag("ReadApiError", () =>
                 Effect.gen(function* () {
-                  const currentPlanId = yield* profile.currentPlanId;
-                  if (Option.isNone(currentPlanId)) {
+                  const planOption = yield* readApi.getCurrentPlan.pipe(
+                    Effect.option
+                  );
+                  if (Option.isNone(planOption)) {
                     return yield* Effect.fail("No plan selected");
                   }
 
@@ -65,7 +65,7 @@ export const machine = setup({
 
                   return yield* api.createDailyLog({
                     date: dailyLogDate,
-                    planId: currentPlanId.value,
+                    planId: planOption.value.id,
                   });
                 })
               ),
