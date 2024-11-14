@@ -10,7 +10,7 @@ export class _PlanInsert extends Schema.Class<_PlanInsert>("_PlanInsert")({
     Schema.filter((params) =>
       params.carbohydratesRatio + params.fatsRatio + params.proteinsRatio ===
       100
-        ? false
+        ? true
         : "Macros ratio must be 100%"
     )
   );
@@ -27,7 +27,7 @@ export class _PlanUpdate extends Schema.Class<_PlanUpdate>("_PlanUpdate")({
     Schema.filter((params) =>
       params.carbohydratesRatio + params.fatsRatio + params.proteinsRatio ===
       100
-        ? false
+        ? true
         : "Macros ratio must be 100%"
     )
   );
