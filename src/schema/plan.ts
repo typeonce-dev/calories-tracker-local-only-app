@@ -32,3 +32,7 @@ export class _PlanUpdate extends Schema.Class<_PlanUpdate>("_PlanUpdate")({
     )
   );
 }
+
+export class PlanRemove extends Schema.Class<PlanRemove>("PlanRemove")({
+  id: Schema.Number,
+}) {}

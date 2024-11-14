@@ -1,15 +1,11 @@
 import { useMachine } from "@xstate/react";
 import { Button, Form, Group } from "react-aria-components";
 import { machine } from "~/machines/manage-plan";
-import type { planTable } from "~/schema/drizzle";
 import { _PlanUpdate } from "~/schema/plan";
+import type { PlanWithLogsCount } from "~/type";
 import QuantityField from "./QuantityField";
 
-export default function PlanCard({
-  plan,
-}: {
-  plan: typeof planTable.$inferSelect;
-}) {
+export default function PlanCard({ plan }: { plan: PlanWithLogsCount }) {
   const [snapshot, send] = useMachine(machine, {
     input: {
       calories: plan.calories,
@@ -20,6 +16,7 @@ export default function PlanCard({
   });
   return (
     <div className="p-2 border border-slate-300">
+      <p>{plan.logs} days</p>
       <p>{plan.calories}</p>
       <Group>
         <p>{plan.carbohydratesRatio}</p>
@@ -65,6 +62,16 @@ export default function PlanCard({
           Update
         </Button>
       </Form>
+
+      {plan.logs === 0 && (
+        <Button
+          type="button"
+          isDisabled={snapshot.matches("Removing")}
+          onPress={() => send({ type: "plan.remove", id: plan.id })}
+        >
+          Remove
+        </Button>
+      )}
     </div>
   );
 }

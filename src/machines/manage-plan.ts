@@ -18,7 +18,9 @@ export const machine = setup({
       carbohydratesRatio: ActorRefFrom<typeof numberFieldMachine>;
       proteinsRatio: ActorRefFrom<typeof numberFieldMachine>;
     },
-    events: {} as { type: "plan.update"; id: number },
+    events: {} as
+      | { type: "plan.update"; id: number }
+      | { type: "plan.remove"; id: number },
   },
   actors: {
     updatePlan: fromPromise(
@@ -40,6 +42,15 @@ export const machine = setup({
             yield* api.updatePlan(input);
           }).pipe(Effect.tapErrorCause(Effect.logError))
         )
+    ),
+    removePlan: fromPromise(({ input }: { input: { id: number } }) =>
+      RuntimeClient.runPromise(
+        Effect.gen(function* () {
+          const api = yield* WriteApi;
+          yield* Effect.log(input);
+          yield* api.removePlan(input);
+        }).pipe(Effect.tapErrorCause(Effect.logError))
+      )
     ),
   },
 }).createMachine({
@@ -71,6 +82,9 @@ export const machine = setup({
         "plan.update": {
           target: "Updating",
         },
+        "plan.remove": {
+          target: "Removing",
+        },
       },
     },
     Updating: {
@@ -86,6 +100,17 @@ export const machine = setup({
               context.carbohydratesRatio.getSnapshot().context.value,
             proteinsRatio: context.proteinsRatio.getSnapshot().context.value,
           };
+        },
+        onError: { target: "Idle" },
+        onDone: { target: "Idle" },
+      },
+    },
+    Removing: {
+      invoke: {
+        src: "removePlan",
+        input: ({ event }) => {
+          assertEvent(event, "plan.remove");
+          return { id: event.id };
         },
         onError: { target: "Idle" },
         onDone: { target: "Idle" },

@@ -8,7 +8,7 @@ import {
   servingTable,
 } from "~/schema/drizzle";
 import { FoodInsert } from "~/schema/food";
-import { _PlanInsert, _PlanUpdate } from "~/schema/plan";
+import { _PlanInsert, _PlanUpdate, PlanRemove } from "~/schema/plan";
 import { ServingInsert, ServingRemove, ServingUpdate } from "~/schema/serving";
 import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
@@ -99,6 +99,14 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         Effect.mapError((error) => new WriteApiError({ cause: error })),
         Effect.flatMap(({ id }) =>
           query((_) => _.delete(servingTable).where(eq(servingTable.id, id)))
+        )
+      ),
+
+      removePlan: flow(
+        Schema.decode(PlanRemove),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap(({ id }) =>
+          query((_) => _.delete(planTable).where(eq(planTable.id, id)))
         )
       ),
     };

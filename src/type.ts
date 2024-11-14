@@ -1,4 +1,4 @@
-import type { servingTable, foodTable } from "./schema/drizzle";
+import type { foodTable, planTable, servingTable } from "./schema/drizzle";
 
 export interface ServingFood {
   id: (typeof servingTable.$inferSelect)["id"];
@@ -12,3 +12,7 @@ export interface ServingFood {
   carbohydrates: (typeof foodTable.$inferSelect)["carbohydrates"];
   proteins: (typeof foodTable.$inferSelect)["proteins"];
 }
+
+export type PlanWithLogsCount = typeof planTable.$inferSelect & {
+  logs: number;
+};
