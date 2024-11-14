@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { DateTime } from "effect";
 import { useDailyLog } from "~/hooks/use-daily-log";
+import { useDailyPlan } from "~/hooks/use-daily-plan";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { Meal } from "~/schema/shared";
+import DailyPlan from "./DailyPlan";
 import SelectFood from "./SelectFood";
 import ServingCard from "./ServingCard";
 
@@ -12,6 +14,7 @@ export default function DailyLogOverview({
   date: typeof DailyLogSelect.fields.date.Type;
 }) {
   const dailyLog = useDailyLog(date);
+  const dailyPlan = useDailyPlan(date);
   return (
     <div>
       <div className="flex items-center">
@@ -27,6 +30,11 @@ export default function DailyLogOverview({
           Next
         </Link>
       </div>
+      {dailyPlan !== undefined ? (
+        <DailyPlan plan={dailyPlan} />
+      ) : (
+        <p>No plan</p>
+      )}
       <div>
         {Meal.literals.map((meal) => (
           <div key={meal}>

@@ -2,8 +2,8 @@ import { useLiveQuery } from "@electric-sql/pglite-react";
 import { eq, sql as sqlOrm } from "drizzle-orm";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { foodTable, servingTable } from "~/schema/drizzle";
-import { usePgliteDrizzle } from "./use-pglite-drizzle";
 import type { ServingFood } from "~/type";
+import { usePgliteDrizzle } from "./use-pglite-drizzle";
 
 export const useDailyLog = (date: typeof DailyLogSelect.fields.date.Type) => {
   const orm = usePgliteDrizzle();
