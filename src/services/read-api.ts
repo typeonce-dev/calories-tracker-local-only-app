@@ -1,7 +1,8 @@
 import { eq } from "drizzle-orm";
-import { Array, Data, Effect, flow } from "effect";
+import { Data, Effect, Schema } from "effect";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { dailyLogTable } from "~/schema/drizzle";
+import { singleResult } from "~/utils";
 import { Pglite } from "./pglite";
 
 class ReadApiError extends Data.TaggedError("ReadApiError")<{
@@ -19,12 +20,8 @@ export class ReadApi extends Effect.Service<ReadApi>()("ReadApi", {
             .where(eq(dailyLogTable.date, DailyLogSelect.formatDate(date)))
             .limit(1)
         ).pipe(
-          Effect.flatMap(
-            flow(
-              Array.head,
-              Effect.mapError((error) => new ReadApiError({ cause: error }))
-            )
-          )
+          singleResult(() => new ReadApiError({ cause: "No log found" })),
+          Effect.flatMap(Schema.decode(DailyLogSelect))
         ),
     };
   }),

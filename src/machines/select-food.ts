@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import {
   assertEvent,
   assign,
@@ -8,6 +8,8 @@ import {
 } from "xstate";
 import { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
+import { Profile } from "~/services/profile";
+import { ReadApi } from "~/services/read-api";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
 import { numberFieldMachine } from "./number-field";
@@ -43,18 +45,39 @@ export const machine = setup({
       }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
+            const profile = yield* Profile;
+            const readApi = yield* ReadApi;
             const api = yield* WriteApi;
 
             if (foodId === null) {
               return yield* Effect.fail("Food not selected");
             }
 
-            yield* api.createServing({
-              foodId,
-              quantity: quantity.getSnapshot().context.value,
-              dailyLogDate: DailyLogSelect.formatDate(dailyLogDate),
-              ...input,
-            });
+            return yield* readApi.getCurrentDateLog(dailyLogDate).pipe(
+              Effect.catchTag("ReadApiError", () =>
+                Effect.gen(function* () {
+                  const currentPlanId = yield* profile.currentPlanId;
+                  if (Option.isNone(currentPlanId)) {
+                    return yield* Effect.fail("No plan selected");
+                  }
+
+                  yield* Effect.log("Creating new daily log");
+
+                  return yield* api.createDailyLog({
+                    date: dailyLogDate,
+                    planId: currentPlanId.value,
+                  });
+                })
+              ),
+              Effect.flatMap((dailyLog) =>
+                api.createServing({
+                  foodId,
+                  quantity: quantity.getSnapshot().context.value,
+                  dailyLogDate: DailyLogSelect.formatDate(dailyLog.date),
+                  ...input,
+                })
+              )
+            );
           })
         )
     ),
