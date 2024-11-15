@@ -1,4 +1,4 @@
-import { eq, not } from "drizzle-orm";
+import { and, eq, not } from "drizzle-orm";
 import { Data, DateTime, Effect, flow, Schema } from "effect";
 import {
   DailyLogInsert,
@@ -12,7 +12,7 @@ import {
   servingTable,
   systemTable,
 } from "~/schema/drizzle";
-import { FoodInsert } from "~/schema/food";
+import { FoodInsert, FoodUpdate } from "~/schema/food";
 import { _PlanInsert, _PlanUpdate, PlanRemove } from "~/schema/plan";
 import { ServingInsert, ServingRemove, ServingUpdate } from "~/schema/serving";
 import { singleResult } from "~/utils";
@@ -105,6 +105,16 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
         )
       ),
 
+      updateFood: flow(
+        Schema.decode(FoodUpdate),
+        Effect.mapError((error) => new WriteApiError({ cause: error })),
+        Effect.flatMap(({ id, ...values }) =>
+          query((_) =>
+            _.update(foodTable).set(values).where(eq(foodTable.id, id))
+          )
+        )
+      ),
+
       updateCurrentPlan: flow(
         Schema.decode(Schema.Number),
         Effect.mapError((error) => new WriteApiError({ cause: error })),
@@ -114,7 +124,12 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
               query((_) =>
                 _.update(planTable)
                   .set({ isCurrent: false })
-                  .where(not(eq(planTable.id, id)))
+                  .where(
+                    and(
+                      not(eq(planTable.id, id)),
+                      eq(planTable.isCurrent, true)
+                    )
+                  )
               ),
               query((_) =>
                 _.update(planTable)

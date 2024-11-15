@@ -1,15 +1,20 @@
 import { useMachine } from "@xstate/react";
 import { Button } from "react-aria-components";
 import { machine } from "~/machines/manage-food";
+import type { foodTable } from "~/schema/drizzle";
 import { Dialog, DialogTrigger } from "./Dialog";
 import FoodEditing from "./FoodEditing";
 import { Modal, ModalOverlay } from "./Modal";
 
-export default function CreateFood() {
-  const [snapshot, send] = useMachine(machine, { input: undefined });
+export default function UpdateFood({
+  food,
+}: {
+  food: typeof foodTable.$inferSelect;
+}) {
+  const [snapshot, send] = useMachine(machine, { input: food });
   return (
     <DialogTrigger>
-      <Button>Create food</Button>
+      <Button>Update food</Button>
       <ModalOverlay isDismissable>
         <Modal>
           <Dialog>
@@ -25,10 +30,10 @@ export default function CreateFood() {
                 sugarsActor={snapshot.context.sugars}
                 fatsActor={snapshot.context.fats}
                 fatsSaturatedActor={snapshot.context.fatsSaturated}
-                onSubmit={() => send({ type: "food.create" })}
+                onSubmit={() => send({ type: "food.update", id: food.id })}
               >
-                <Button type="submit" isDisabled={snapshot.matches("Creating")}>
-                  {snapshot.matches("Creating") ? "Creating..." : "Create"}
+                <Button type="submit" isDisabled={snapshot.matches("Updating")}>
+                  {snapshot.matches("Updating") ? "Updating..." : "Update"}
                 </Button>
 
                 {snapshot.context.submitError !== null && (

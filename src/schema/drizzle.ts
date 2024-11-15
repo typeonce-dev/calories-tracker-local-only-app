@@ -19,7 +19,7 @@ export const foodTable = pgTable(
   "food",
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    name: varchar({ length: 255 }).notNull(),
+    name: varchar({ length: 255 }).notNull().unique(),
     brand: varchar({ length: 255 }),
     calories: integer().notNull(),
     fats: integer().notNull(),

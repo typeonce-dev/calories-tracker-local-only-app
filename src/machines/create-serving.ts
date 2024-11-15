@@ -15,20 +15,18 @@ import { numberFieldMachine } from "./number-field";
 
 interface Context {
   submitError: string | null;
-  foodId: number | null;
   quantity: ActorRefFrom<typeof numberFieldMachine>;
 }
 
 export const machine = setup({
   types: {
     context: {} as Context,
-    events: {} as
-      | { type: "food.select"; id: number }
-      | {
-          type: "quantity.confirm";
-          meal: typeof Meal.Type;
-          dailyLogDate: typeof DailyLogSelect.fields.date.Type;
-        },
+    events: {} as {
+      type: "quantity.confirm";
+      meal: typeof Meal.Type;
+      dailyLogDate: typeof DailyLogSelect.fields.date.Type;
+      foodId: number;
+    },
   },
   actors: {
     createServing: fromPromise(
@@ -36,8 +34,8 @@ export const machine = setup({
         input: { foodId, quantity, dailyLogDate, ...input },
       }: {
         input: {
-          foodId: Context["foodId"];
           quantity: Context["quantity"];
+          foodId: number;
           meal: typeof Meal.Type;
           dailyLogDate: typeof DailyLogSelect.fields.date.Type;
         };
@@ -83,27 +81,14 @@ export const machine = setup({
     ),
   },
 }).createMachine({
-  id: "select-food",
+  id: "create-serving",
   context: ({ spawn }) => ({
     submitError: null,
-    foodId: null,
     quantity: spawn(numberFieldMachine),
   }),
-  initial: "Unselected",
+  initial: "Editing",
   states: {
-    Unselected: {
-      on: {
-        "food.select": {
-          target: "Selected",
-          actions: assign(({ event }) => ({ foodId: event.id })),
-        },
-      },
-    },
-    Selected: {
-      always: {
-        target: "Unselected",
-        guard: ({ context }) => context.foodId === null,
-      },
+    Editing: {
       on: {
         "quantity.confirm": {
           target: "Creating",
@@ -117,14 +102,14 @@ export const machine = setup({
         input: ({ context, event }) => {
           assertEvent(event, "quantity.confirm");
           return {
-            foodId: context.foodId,
             quantity: context.quantity,
+            foodId: event.foodId,
             meal: event.meal,
             dailyLogDate: event.dailyLogDate,
           };
         },
         onError: {
-          target: "Selected",
+          target: "Editing",
           actions: assign(({ event }) => ({
             submitError:
               event.error instanceof Error
@@ -132,9 +117,13 @@ export const machine = setup({
                 : "Unknown error",
           })),
         },
-        onDone: { target: "Created" },
+        onDone: {
+          target: "Editing",
+          actions: ({ context }) => {
+            context.quantity.send({ type: "reset" });
+          },
+        },
       },
     },
-    Created: { type: "final" },
   },
 });

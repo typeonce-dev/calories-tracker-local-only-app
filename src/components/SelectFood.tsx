@@ -1,15 +1,12 @@
-import { useMachine } from "@xstate/react";
-import { Match } from "effect";
 import { Button } from "react-aria-components";
 import { useFoods } from "~/hooks/use-foods";
-import { machine } from "~/machines/select-food";
 import type { DailyLogSelect } from "~/schema/daily-log";
-import { ServingInsert } from "~/schema/serving";
 import type { Meal } from "~/schema/shared";
 import CreateFood from "./CreateFood";
+import CreateServing from "./CreateServing";
 import { Dialog, DialogTrigger } from "./Dialog";
 import { Modal, ModalOverlay } from "./Modal";
-import QuantityField from "./QuantityField";
+import UpdateFood from "./UpdateFood";
 
 export default function SelectFood({
   meal,
@@ -18,7 +15,6 @@ export default function SelectFood({
   meal: typeof Meal.Type;
   dailyLogDate: typeof DailyLogSelect.fields.date.Type;
 }) {
-  const [snapshot, send] = useMachine(machine);
   const foods = useFoods();
   return (
     <DialogTrigger>
@@ -26,57 +22,24 @@ export default function SelectFood({
       <ModalOverlay isDismissable>
         <Modal>
           <Dialog>
-            {({ close }) =>
-              Match.value(snapshot.value).pipe(
-                Match.when("Unselected", () => (
-                  <div>
-                    <CreateFood />
-                    <div className="flex flex-col">
-                      {foods?.rows.map((food) => (
-                        <Button
-                          key={food.id}
-                          onPress={() =>
-                            send({ type: "food.select", id: food.id })
-                          }
-                        >
-                          {food.name}
-                        </Button>
-                      ))}
+            {({ close }) => (
+              <div>
+                <CreateFood />
+                <div className="flex flex-col">
+                  {foods?.rows.map((food) => (
+                    <div key={food.id} className="flex items-center gap-x-4">
+                      <p>{food.name}</p>
+                      <UpdateFood food={food} />
+                      <CreateServing
+                        dailyLogDate={dailyLogDate}
+                        meal={meal}
+                        foodId={food.id}
+                      />
                     </div>
-                  </div>
-                )),
-                Match.when("Selected", () => (
-                  <div>
-                    <QuantityField
-                      actor={snapshot.context.quantity}
-                      schema={ServingInsert.fields.quantity}
-                      label="Quantity"
-                      name="quantity"
-                    />
-
-                    <Button
-                      onPress={() =>
-                        send({ type: "quantity.confirm", meal, dailyLogDate })
-                      }
-                    >
-                      Confirm
-                    </Button>
-
-                    {snapshot.context.submitError !== null && (
-                      <p>{snapshot.context.submitError}</p>
-                    )}
-                  </div>
-                )),
-                Match.when("Creating", () => <p>...</p>),
-                Match.when("Created", () => (
-                  <div>
-                    <p>Done</p>
-                    <Button onPress={close}>Close</Button>
-                  </div>
-                )),
-                Match.exhaustive
-              )
-            }
+                  ))}
+                </div>
+              </div>
+            )}
           </Dialog>
         </Modal>
       </ModalOverlay>
