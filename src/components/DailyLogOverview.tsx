@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { DateTime } from "effect";
+import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
+import { Text } from "react-aria-components";
 import { useDailyLog } from "~/hooks/use-daily-log";
 import { useDailyPlan } from "~/hooks/use-daily-plan";
 import { DailyLogSelect } from "~/schema/daily-log";
@@ -16,25 +18,29 @@ export default function DailyLogOverview({
   const dailyLog = useDailyLog(date);
   const dailyPlan = useDailyPlan(date);
   return (
-    <div>
-      <div className="flex items-center">
+    <div className="flex flex-col gap-y-8">
+      <div className="flex items-center justify-between">
         <Link
           to={`/log/${DailyLogSelect.formatDate(DateTime.subtract(date, { days: 1 }))}`}
         >
-          Previous
+          <MoveLeftIcon />
         </Link>
-        <p>Log for {DailyLogSelect.formatDate(date)}</p>
+        <Text className="text-2xl">{DailyLogSelect.displayDate(date)}</Text>
         <Link
           to={`/log/${DailyLogSelect.formatDate(DateTime.add(date, { days: 1 }))}`}
         >
-          Next
+          <MoveRightIcon />
         </Link>
       </div>
-      {dailyPlan !== undefined ? (
-        <DailyPlanCard plan={dailyPlan} date={date} />
-      ) : (
-        <p>No plan</p>
-      )}
+
+      <div>
+        {dailyPlan !== undefined ? (
+          <DailyPlanCard plan={dailyPlan} date={date} />
+        ) : (
+          <p>No plan</p>
+        )}
+      </div>
+
       <div>
         {Meal.literals.map((meal) => (
           <div key={meal}>
