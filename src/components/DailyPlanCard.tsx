@@ -1,5 +1,5 @@
 import { Match } from "effect";
-import { Group, Text } from "react-aria-components";
+import { Group, Label, ProgressBar } from "react-aria-components";
 import type { DailyLogSelect } from "~/schema/daily-log";
 import type { planTable } from "~/schema/drizzle";
 import { cn } from "~/utils";
@@ -64,17 +64,43 @@ const Segment = ({
 
 export default function DailyPlanCard({
   plan,
+  totalCalories,
   date,
 }: {
   plan: typeof planTable.$inferSelect;
   date: typeof DailyLogSelect.fields.date.Type;
+  totalCalories: number;
 }) {
   return (
-    <div className="flex gap-y-2 flex-col items-center justify-center">
-      <Text className="text-sm">
-        <span className="text-xl pr-1">{plan.calories}</span>
-        kcal
-      </Text>
+    <div className="flex flex-col items-center justify-center">
+      <ProgressBar
+        value={totalCalories}
+        maxValue={plan.calories}
+        className="w-full"
+      >
+        {({ percentage, valueText }) => (
+          <>
+            <Group className="flex items-center justify-between px-2">
+              <Label className="text-xs">
+                <span className="pr-1 text-base font-medium">
+                  {totalCalories.toFixed(0)}
+                </span>
+                kcal
+              </Label>
+              <p className="text-xs text-right w-full">
+                <span className="pr-1 text-base">{plan.calories}</span>
+                kcal
+              </p>
+            </Group>
+            <div className="h-2 w-full bg-slate-200/10 border-t border-slate-300">
+              <div
+                className="h-full bg-slate-200"
+                style={{ width: percentage + "%" }}
+              />
+            </div>
+          </>
+        )}
+      </ProgressBar>
       <Group className="w-full overflow-hidden flex">
         <Segment
           totalCalories={plan.calories}

@@ -17,8 +17,13 @@ export default function DailyLogOverview({
 }) {
   const dailyLog = useDailyLog(date);
   const dailyPlan = useDailyPlan(date);
+  const totalCalories =
+    dailyLog?.rows.reduce(
+      (acc, log) => acc + (log.calories / 100) * log.quantity,
+      0
+    ) ?? 0;
   return (
-    <div className="flex flex-col gap-y-8">
+    <div>
       <div className="flex flex-col gap-y-6">
         <div className="flex items-center justify-between px-6">
           <Link
@@ -37,34 +42,36 @@ export default function DailyLogOverview({
         </div>
 
         {dailyPlan !== undefined && (
-          <DailyPlanCard plan={dailyPlan} date={date} />
+          <DailyPlanCard
+            plan={dailyPlan}
+            date={date}
+            totalCalories={totalCalories}
+          />
         )}
       </div>
 
-      <div>
-        {Meal.literals.map((meal) => {
-          const servings =
-            dailyLog?.rows.filter((log) => log.meal === meal) ?? [];
-          return (
-            <div
-              key={meal}
-              className="flex flex-col items-center justify-center gap-y-4 border border-slate-400 bg-white py-6"
-            >
-              <Group className="flex items-center justify-between w-full px-6">
-                <h2 className="font-bold capitalize">{meal}</h2>
-                <SelectFood dailyLogDate={date} meal={meal} />
-              </Group>
-              {servings.length > 0 && (
-                <div className="w-full flex flex-col divide-y divide-slate-200">
-                  {servings.map((log) => (
-                    <ServingCard key={log.id} log={log} />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      {Meal.literals.map((meal) => {
+        const servings =
+          dailyLog?.rows.filter((log) => log.meal === meal) ?? [];
+        return (
+          <div
+            key={meal}
+            className="flex flex-col items-center justify-center gap-y-4 border border-slate-400 bg-white py-6"
+          >
+            <Group className="flex items-center justify-between w-full px-6">
+              <h2 className="font-bold capitalize">{meal}</h2>
+              <SelectFood dailyLogDate={date} meal={meal} />
+            </Group>
+            {servings.length > 0 && (
+              <div className="w-full flex flex-col divide-y divide-slate-200">
+                {servings.map((log) => (
+                  <ServingCard key={log.id} log={log} />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
