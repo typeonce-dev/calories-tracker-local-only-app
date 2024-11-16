@@ -1,5 +1,5 @@
 import { ListPlusIcon } from "lucide-react";
-import { Button } from "react-aria-components";
+import { Button as AriaButton, Group } from "react-aria-components";
 import { useFoods } from "~/hooks/use-foods";
 import type { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
@@ -19,28 +19,33 @@ export default function SelectFood({
   const foods = useFoods();
   return (
     <DialogTrigger>
-      <Button>
+      <AriaButton className="focus:outline-none">
         <ListPlusIcon />
-      </Button>
+      </AriaButton>
       <ModalOverlay isDismissable>
         <Modal>
           <Dialog>
             {({ close }) => (
-              <div>
-                <CreateFood />
-                <div className="flex flex-col">
+              <div className="flex flex-col gap-y-6">
+                <div className="flex flex-col gap-y-2">
                   {foods?.rows.map((food) => (
-                    <div key={food.id} className="flex items-center gap-x-4">
-                      <p>{food.name}</p>
-                      <UpdateFood food={food} />
-                      <CreateServing
-                        dailyLogDate={dailyLogDate}
-                        meal={meal}
-                        foodId={food.id}
-                      />
+                    <div
+                      key={food.id}
+                      className="flex items-center justify-between"
+                    >
+                      <p className="font-medium">{food.name}</p>
+                      <Group className="flex items-center justify-end gap-x-2">
+                        <UpdateFood food={food} />
+                        <CreateServing
+                          dailyLogDate={dailyLogDate}
+                          meal={meal}
+                          foodId={food.id}
+                        />
+                      </Group>
                     </div>
                   ))}
                 </div>
+                <CreateFood />
               </div>
             )}
           </Dialog>

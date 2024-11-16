@@ -1,20 +1,14 @@
 import { useSelector } from "@xstate/react";
 import type { Schema } from "effect";
 import type React from "react";
-import {
-  FieldError,
-  Form,
-  Group,
-  Input,
-  Label,
-  TextField,
-} from "react-aria-components";
+import { Form, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
 import type { numberFieldMachine } from "~/machines/number-field";
 import type { textFieldMachine } from "~/machines/text-field";
 import { FoodInsert } from "~/schema/food";
 import { validate } from "~/utils";
 import QuantityField from "./QuantityField";
+import { FieldError, Input, Label, TextField } from "./TextField";
 
 const TextFieldFromActor = ({
   actor,
@@ -34,9 +28,10 @@ const TextFieldFromActor = ({
       value={context.value}
       validate={validate(schema)}
       onChange={(value) => actor.send({ type: "update", value })}
+      className="flex flex-col gap-y-1 items-center w-full"
     >
-      <Label>{label}</Label>
-      <Input />
+      <Label className="text-sm font-medium">{label}</Label>
+      <Input className="w-full text-center" placeholder={label} />
       <Group>
         <FieldError />
       </Group>
@@ -73,6 +68,7 @@ export default function FoodEditing({
 }) {
   return (
     <Form
+      className="flex flex-col gap-y-6"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit(event);

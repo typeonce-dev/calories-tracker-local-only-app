@@ -2,6 +2,8 @@
 
 @theme {
   --color-theme-background: #fffbfc;
+  --color-update: #6c757d;
+  --color-remove: #c82333;
 
   --color-fat: #ffb400;
   --color-carbohydrate: #1fa813;

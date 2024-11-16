@@ -1,7 +1,8 @@
 import { useMachine } from "@xstate/react";
-import { Button } from "react-aria-components";
+import { UserPenIcon } from "lucide-react";
 import { machine } from "~/machines/manage-food";
 import type { foodTable } from "~/schema/drizzle";
+import { Button } from "./Button";
 import { Dialog, DialogTrigger } from "./Dialog";
 import FoodEditing from "./FoodEditing";
 import { Modal, ModalOverlay } from "./Modal";
@@ -14,7 +15,9 @@ export default function UpdateFood({
   const [snapshot, send] = useMachine(machine, { input: food });
   return (
     <DialogTrigger>
-      <Button>Update food</Button>
+      <Button>
+        <UserPenIcon size={16} />
+      </Button>
       <ModalOverlay isDismissable>
         <Modal>
           <Dialog>
@@ -32,7 +35,11 @@ export default function UpdateFood({
                 fatsSaturatedActor={snapshot.context.fatsSaturated}
                 onSubmit={() => send({ type: "food.update", id: food.id })}
               >
-                <Button type="submit" isDisabled={snapshot.matches("Updating")}>
+                <Button
+                  action="update"
+                  type="submit"
+                  isDisabled={snapshot.matches("Updating")}
+                >
                   {snapshot.matches("Updating") ? "Updating..." : "Update"}
                 </Button>
 

@@ -1,11 +1,12 @@
+import { useSelector } from "@xstate/react";
+import type { Schema } from "effect";
+import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button, Group } from "react-aria-components";
+import type { ActorRefFrom } from "xstate";
+import type { numberFieldMachine } from "~/machines/number-field";
 import { validate } from "~/utils";
 import { NumberField } from "./NumberField";
 import { FieldError, Input, Label } from "./TextField";
-import { useSelector } from "@xstate/react";
-import type { Schema } from "effect";
-import type { ActorRefFrom } from "xstate";
-import type { numberFieldMachine } from "~/machines/number-field";
 
 export default function QuantityField({
   actor,
@@ -27,12 +28,23 @@ export default function QuantityField({
       value={context.value}
       validate={validate(schema)}
       onChange={(value) => actor.send({ type: "update", value })}
+      className="flex flex-col gap-y-1 items-center w-full"
     >
-      <Label>{label}</Label>
-      <Group>
-        <Button slot="decrement">-</Button>
-        <Input />
-        <Button slot="increment">+</Button>
+      <Label className="text-sm font-medium">{label}</Label>
+      <Group className="flex items-center gap-x-2 w-full">
+        <Button
+          slot="decrement"
+          className="h-6 w-6 border flex items-center justify-center rounded-full border-slate-200"
+        >
+          <MinusIcon size={12} />
+        </Button>
+        <Input className="flex-1 text-center" placeholder="0.0" />
+        <Button
+          slot="increment"
+          className="h-6 w-6 border flex items-center justify-center rounded-full border-slate-200"
+        >
+          <PlusIcon size={12} />
+        </Button>
       </Group>
       <Group>
         <FieldError />

@@ -1,6 +1,6 @@
 import { useMachine } from "@xstate/react";
-import { Button } from "react-aria-components";
 import { machine } from "~/machines/manage-food";
+import { Button } from "./Button";
 import { Dialog, DialogTrigger } from "./Dialog";
 import FoodEditing from "./FoodEditing";
 import { Modal, ModalOverlay } from "./Modal";
@@ -9,7 +9,7 @@ export default function CreateFood() {
   const [snapshot, send] = useMachine(machine, { input: undefined });
   return (
     <DialogTrigger>
-      <Button>Create food</Button>
+      <Button className="w-full">Create food</Button>
       <ModalOverlay isDismissable>
         <Modal>
           <Dialog>
@@ -27,7 +27,11 @@ export default function CreateFood() {
                 fatsSaturatedActor={snapshot.context.fatsSaturated}
                 onSubmit={() => send({ type: "food.create" })}
               >
-                <Button type="submit" isDisabled={snapshot.matches("Creating")}>
+                <Button
+                  action="update"
+                  type="submit"
+                  isDisabled={snapshot.matches("Creating")}
+                >
                   {snapshot.matches("Creating") ? "Creating..." : "Create"}
                 </Button>
 
