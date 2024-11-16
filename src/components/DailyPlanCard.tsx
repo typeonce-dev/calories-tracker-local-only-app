@@ -5,24 +5,30 @@ import type { planTable } from "~/schema/drizzle";
 import { cn } from "~/utils";
 import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./Icons";
 
-type Label = "fats" | "carbohydrate" | "protein";
+type Label = "fat" | "carbohydrate" | "protein";
 const GramsForCalorie = Match.type<Label>().pipe(
-  Match.when("fats", () => 9),
+  Match.when("fat", () => 9),
   Match.when("carbohydrate", () => 4),
   Match.when("protein", () => 4),
   Match.exhaustive
 );
 const SegmentColor = Match.type<Label>().pipe(
-  Match.when("fats", () => "border-fat text-fat-dark bg-fat/30"),
+  Match.when("fat", () => "border-fat text-fat-dark"),
   Match.when(
     "carbohydrate",
-    () => "border-carbohydrate text-carbohydrate-dark bg-carbohydrate/30"
+    () => "border-carbohydrate text-carbohydrate-dark"
   ),
-  Match.when("protein", () => "border-protein text-protein-dark bg-protein/30"),
+  Match.when("protein", () => "border-protein text-protein-dark"),
+  Match.exhaustive
+);
+const SegmentFillColor = Match.type<Label>().pipe(
+  Match.when("fat", () => "bg-fat/30"),
+  Match.when("carbohydrate", () => "bg-carbohydrate/30"),
+  Match.when("protein", () => "bg-protein/30"),
   Match.exhaustive
 );
 const SegmentIcon = Match.type<Label>().pipe(
-  Match.when("fats", () => <FatIcon size={12} />),
+  Match.when("fat", () => <FatIcon size={12} />),
   Match.when("carbohydrate", () => <CarbohydrateIcon size={12} />),
   Match.when("protein", () => <ProteinIcon size={12} />),
   Match.exhaustive
@@ -31,45 +37,62 @@ const SegmentIcon = Match.type<Label>().pipe(
 const Segment = ({
   value,
   label,
-  totalCalories,
+  planCalories,
+  ratio,
 }: {
   value: number;
+  ratio: number;
   label: Label;
-  totalCalories: number;
+  planCalories: number;
 }) => {
+  const maxValue = ((ratio / 100) * planCalories) / GramsForCalorie(label);
   return (
-    <div style={{ width: `${value}%` }}>
-      <div
-        role="progressbar"
-        aria-valuenow={value}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`${label}: ${value}`}
-        className={cn(
-          SegmentColor(label),
-          "border-y-2 w-full p-1 flex gap-x-2 items-center justify-center"
-        )}
-      >
-        <span className="text-center font-mono text-xs font-bold">
-          {(((value / 100) * totalCalories) / GramsForCalorie(label)).toFixed(
-            0
-          )}
-          g
-        </span>
-        {SegmentIcon(label)}
-      </div>
-    </div>
+    <ProgressBar value={value} maxValue={maxValue} className="w-full">
+      {({ percentage }) => (
+        <>
+          <div
+            className={cn(
+              SegmentColor(label),
+              "w-full relative border-y py-0.5 flex items-center justify-between"
+            )}
+          >
+            <Group className="flex items-center justify-between px-2 w-full z-[1]">
+              <Label className="text-xs inline-flex items-center gap-x-2">
+                {SegmentIcon(label)}
+                <span className="font-bold">{value.toFixed(0)}g</span>
+              </Label>
+              <p className="text-xs text-right">
+                <span className="pr-1">{maxValue.toFixed(0)}</span>g
+              </p>
+            </Group>
+            <div
+              className={cn(
+                SegmentFillColor(label),
+                "h-full absolute left-0 top-0 transition-[width] duration-300 ease-in-out"
+              )}
+              style={{ width: percentage + "%" }}
+            />
+          </div>
+        </>
+      )}
+    </ProgressBar>
   );
 };
 
 export default function DailyPlanCard({
   plan,
   totalCalories,
+  totalCarbohydrates,
+  totalFats,
+  totalProteins,
   date,
 }: {
   plan: typeof planTable.$inferSelect;
   date: typeof DailyLogSelect.fields.date.Type;
   totalCalories: number;
+  totalFats: number;
+  totalCarbohydrates: number;
+  totalProteins: number;
 }) {
   return (
     <div className="flex flex-col items-center justify-center">
@@ -78,7 +101,7 @@ export default function DailyPlanCard({
         maxValue={plan.calories}
         className="w-full"
       >
-        {({ percentage, valueText }) => (
+        {({ percentage }) => (
           <>
             <Group className="flex items-center justify-between px-2">
               <Label className="text-xs">
@@ -101,23 +124,25 @@ export default function DailyPlanCard({
           </>
         )}
       </ProgressBar>
-      <Group className="w-full overflow-hidden flex">
-        <Segment
-          totalCalories={plan.calories}
-          value={plan.carbohydratesRatio}
-          label="carbohydrate"
-        />
-        <Segment
-          totalCalories={plan.calories}
-          value={plan.proteinsRatio}
-          label="protein"
-        />
-        <Segment
-          totalCalories={plan.calories}
-          value={plan.fatsRatio}
-          label="fats"
-        />
-      </Group>
+
+      <Segment
+        label="carbohydrate"
+        value={totalCarbohydrates}
+        ratio={plan.carbohydratesRatio}
+        planCalories={plan.calories}
+      />
+      <Segment
+        label="protein"
+        value={totalProteins}
+        ratio={plan.proteinsRatio}
+        planCalories={plan.calories}
+      />
+      <Segment
+        label="fat"
+        value={totalFats}
+        ratio={plan.fatsRatio}
+        planCalories={plan.calories}
+      />
       {/* <UpdateDailyPlan date={date} /> */}
     </div>
   );

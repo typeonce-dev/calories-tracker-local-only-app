@@ -22,6 +22,21 @@ export default function DailyLogOverview({
       (acc, log) => acc + (log.calories / 100) * log.quantity,
       0
     ) ?? 0;
+  const totalFats =
+    dailyLog?.rows.reduce(
+      (acc, log) => acc + (log.fats / 100) * log.quantity,
+      0
+    ) ?? 0;
+  const totalCarbohydrates =
+    dailyLog?.rows.reduce(
+      (acc, log) => acc + (log.carbohydrates / 100) * log.quantity,
+      0
+    ) ?? 0;
+  const totalProteins =
+    dailyLog?.rows.reduce(
+      (acc, log) => acc + (log.proteins / 100) * log.quantity,
+      0
+    ) ?? 0;
   return (
     <div>
       <div className="flex flex-col gap-y-6">
@@ -46,6 +61,9 @@ export default function DailyLogOverview({
             plan={dailyPlan}
             date={date}
             totalCalories={totalCalories}
+            totalCarbohydrates={totalCarbohydrates}
+            totalFats={totalFats}
+            totalProteins={totalProteins}
           />
         )}
       </div>
