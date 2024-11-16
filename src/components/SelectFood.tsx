@@ -1,3 +1,4 @@
+import { ListPlusIcon } from "lucide-react";
 import { Button } from "react-aria-components";
 import { useFoods } from "~/hooks/use-foods";
 import type { DailyLogSelect } from "~/schema/daily-log";
@@ -18,7 +19,9 @@ export default function SelectFood({
   const foods = useFoods();
   return (
     <DialogTrigger>
-      <Button>Select food</Button>
+      <Button>
+        <ListPlusIcon />
+      </Button>
       <ModalOverlay isDismissable>
         <Modal>
           <Dialog>

@@ -1,23 +1,54 @@
 import { useMachine } from "@xstate/react";
-import { Button, Group } from "react-aria-components";
+import { Group } from "react-aria-components";
 import { machine } from "~/machines/manage-serving";
-import { ServingUpdate } from "~/schema/serving";
 import type { ServingFood } from "~/type";
-import QuantityField from "./QuantityField";
+import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./Icons";
+
+const format = (value: number, quantity: number) => (value / 100) * quantity;
 
 export default function ServingCard({ log }: { log: ServingFood }) {
   const [snapshot, send] = useMachine(machine, {
     input: { quantity: log.quantity },
   });
+  const calories = format(log.calories, log.quantity);
+  const carbohydrates = format(log.carbohydrates, log.quantity);
+  const proteins = format(log.proteins, log.quantity);
+  const fats = format(log.fats, log.quantity);
   return (
-    <div className="p-2 border border-slate-300">
-      <p className="font-bold">{log.name}</p>
-      <p>{log.quantity}g</p>
-      <p>{(log.quantity / 100) * log.calories}kcal</p>
-      <p>{(log.quantity / 100) * log.carbohydrates}carbohydrates</p>
-      <p>{(log.quantity / 100) * log.fats}fats</p>
-      <p>{(log.quantity / 100) * log.proteins}proteins</p>
-      <Group>
+    <div className="pt-4 px-6 [&:not(:last-child)]:pb-6">
+      <div className="flex flex-col gap-y-2">
+        <Group className="flex items-center justify-between">
+          <p>{log.name}</p>
+          <p className="text-xs">
+            <span className="text-base font-medium">{calories.toFixed(1)}</span>
+            kcal
+          </p>
+        </Group>
+        <Group className="flex items-center justify-between text-slate-700 font-mono">
+          <p>{log.quantity}g</p>
+          <div className="flex gap-x-4 items-center justify-end">
+            {carbohydrates >= 0.1 && (
+              <p className="flex gap-x-1 items-center justify-center text-carbohydrate-dark">
+                <CarbohydrateIcon size={12} />
+                <span className="text-xs">{carbohydrates.toFixed(1)}g</span>
+              </p>
+            )}
+            {proteins >= 0.1 && (
+              <p className="flex gap-x-1 items-center justify-center text-protein-dark">
+                <ProteinIcon size={12} />
+                <span className="text-xs">{proteins.toFixed(1)}g</span>
+              </p>
+            )}
+            {fats >= 0.1 && (
+              <p className="flex gap-x-1 items-center justify-center text-fat-dark">
+                <FatIcon size={12} />
+                <span className="text-xs">{fats.toFixed(1)}g</span>
+              </p>
+            )}
+          </div>
+        </Group>
+      </div>
+      {/* <Group>
         <QuantityField
           actor={snapshot.context.quantity}
           schema={ServingUpdate.fields.quantity}
@@ -42,7 +73,7 @@ export default function ServingCard({ log }: { log: ServingFood }) {
         >
           Update
         </Button>
-      </Group>
+      </Group> */}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import DailyLogOverview from "~/components/DailyLogOverview";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { RuntimeClient } from "~/services/runtime-client";
 
-export const Route = createFileRoute("/log/$date")({
+export const Route = createFileRoute("/$date")({
   component: RouteComponent,
   loader: ({ params }) =>
     RuntimeClient.runPromise(

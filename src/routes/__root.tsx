@@ -15,7 +15,7 @@ function RootComponent() {
   return (
     <PGliteProvider db={client}>
       <PgliteDrizzleContext.Provider value={orm}>
-        <div className="max-w-xl mx-auto my-12">
+        <div className="max-w-xl mx-auto pt-12 bg-theme-background">
           <Outlet />
         </div>
       </PgliteDrizzleContext.Provider>

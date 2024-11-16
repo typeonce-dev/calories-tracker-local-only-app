@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+@theme {
+  --color-theme-background: #fffbfc;
+
+  --color-fat: #ffb400;
+  --color-carbohydrate: #1fa813;
+  --color-protein: #7d00e5;
+  --color-fat-dark: #cc8a00;
+  --color-carbohydrate-dark: #13790e;
+  --color-protein-dark: #5a00a3;
+}
