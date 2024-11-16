@@ -6,7 +6,7 @@ const ModalOverlay = ({ className, ...props }: Aria.ModalOverlayProps) => {
   return (
     <Aria.ModalOverlay
       className={cn(
-        "fixed inset-0 z-50 w-dvw h-dvh bg-black/30 flex items-center justify-center",
+        "fixed inset-0 z-50 w-dvw h-dvh bg-black/30 flex items-end justify-center",
         className
       )}
       {...props}
@@ -17,7 +17,10 @@ const ModalOverlay = ({ className, ...props }: Aria.ModalOverlayProps) => {
 const Modal = ({ className, ...props }: ComponentProps<typeof Aria.Modal>) => {
   return (
     <Aria.Modal
-      className={cn("bg-white outline-none max-w-2xl", className)}
+      className={cn(
+        "bg-white outline-none rounded-t-md overflow-hidden",
+        className
+      )}
       {...props}
     />
   );
