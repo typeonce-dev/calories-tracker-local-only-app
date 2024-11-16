@@ -56,16 +56,18 @@ export default function DailyLogOverview({
           </Link>
         </div>
 
-        {dailyPlan !== undefined && (
-          <DailyPlanCard
-            plan={dailyPlan}
-            date={date}
-            totalCalories={totalCalories}
-            totalCarbohydrates={totalCarbohydrates}
-            totalFats={totalFats}
-            totalProteins={totalProteins}
-          />
-        )}
+        <div>
+          {dailyPlan !== undefined && (
+            <DailyPlanCard
+              plan={dailyPlan}
+              date={date}
+              totalCalories={totalCalories}
+              totalCarbohydrates={totalCarbohydrates}
+              totalFats={totalFats}
+              totalProteins={totalProteins}
+            />
+          )}
+        </div>
       </div>
 
       {Meal.literals.map((meal) => {

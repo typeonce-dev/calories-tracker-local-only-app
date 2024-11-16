@@ -27,7 +27,7 @@ export default function ManageServing({
         <Modal>
           <Dialog>
             {({ close }) => (
-              <div className="flex flex-col gap-y-6">
+              <div className="flex flex-col gap-y-4">
                 <Group>
                   <QuantityField
                     actor={snapshot.context.quantity}
@@ -36,7 +36,7 @@ export default function ManageServing({
                     name="quantity"
                   />
                 </Group>
-                <Group className="flex items-center gap-x-4">
+                <Group className="flex items-center gap-x-2">
                   <Button
                     action="remove"
                     className="flex-1"
