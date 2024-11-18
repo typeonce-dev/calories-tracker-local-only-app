@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Console, Effect } from "effect";
 import {
   assertEvent,
   assign,
@@ -53,10 +53,11 @@ export const machine = setup({
 
           yield* Effect.log(params);
 
-          yield* api
-            .createFood(params)
-            .pipe(Effect.mapError((error) => error.message));
-        }).pipe(Effect.tapError(Effect.logError))
+          yield* api.createFood(params).pipe(
+            Effect.tapError(Console.log),
+            Effect.mapError((error) => error.message)
+          );
+        })
       )
     ),
     updateFood: fromPromise(

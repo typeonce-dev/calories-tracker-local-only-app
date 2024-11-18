@@ -1,10 +1,7 @@
-import { useLiveQuery } from "@electric-sql/pglite-react";
 import { foodTable } from "~/schema/drizzle";
-import { usePgliteDrizzle } from "./use-pglite-drizzle";
+import { FoodSelect } from "~/schema/food";
+import { useQuery } from "./use-query";
 
 export const useFoods = () => {
-  const orm = usePgliteDrizzle();
-  const query = orm.select().from(foodTable);
-  const { params, sql } = query.toSQL();
-  return useLiveQuery<typeof foodTable.$inferSelect>(sql, params);
+  return useQuery((orm) => orm.select().from(foodTable).toSQL(), FoodSelect);
 };

@@ -1,11 +1,11 @@
 import { Schema } from "effect";
 import { DailyLogSelect } from "./daily-log";
-import { Meal } from "./shared";
+import { FloatQuantityPositive, Meal, PrimaryKeyIndex } from "./shared";
 
 export class ServingInsert extends Schema.Class<ServingInsert>("ServingInsert")(
   {
-    foodId: Schema.Number,
-    quantity: Schema.Positive,
+    foodId: PrimaryKeyIndex,
+    quantity: FloatQuantityPositive,
     meal: Meal,
     dailyLogDate: DailyLogSelect.fields.date,
   }
@@ -13,13 +13,13 @@ export class ServingInsert extends Schema.Class<ServingInsert>("ServingInsert")(
 
 export class ServingUpdate extends Schema.Class<ServingUpdate>("ServingUpdate")(
   {
-    id: Schema.Number,
-    quantity: Schema.Positive,
+    id: PrimaryKeyIndex,
+    quantity: FloatQuantityPositive,
   }
 ) {}
 
 export class ServingRemove extends Schema.Class<ServingRemove>("ServingRemove")(
   {
-    id: Schema.Number,
+    id: PrimaryKeyIndex,
   }
 ) {}

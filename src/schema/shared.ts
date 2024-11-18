@@ -1,18 +1,30 @@
-import { Either, Schema } from "effect";
+import { Schema } from "effect";
 
-const DailyLogDateType = Symbol.for("@@DailyLogDate");
-export const DailyLogDate = Schema.NonEmptyString.pipe(
-  Schema.filter((str, options) =>
-    Schema.decodeEither(Schema.DateFromString)(str, options).pipe(
-      Either.flip,
-      Either.map((error) => error.issue),
-      Either.getOrUndefined
-    )
-  ),
-  Schema.brand(DailyLogDateType)
+const FloatQuantity = Schema.Number.pipe(
+  Schema.transform(Schema.Number, {
+    decode: (value) => value * 10,
+    encode: (value) => value / 10,
+  })
 );
 
 export const Meal = Schema.Literal("breakfast", "lunch", "dinner", "snacks");
+
+const FloatQuantityNonNegativeType = Symbol("@@FloatQuantityNonNegative");
+export const FloatQuantityNonNegative = FloatQuantity.pipe(
+  Schema.nonNegative(),
+  Schema.brand(FloatQuantityNonNegativeType)
+);
+
+const FloatQuantityPositiveType = Symbol("@@FloatQuantityPositive");
+export const FloatQuantityPositive = FloatQuantity.pipe(
+  Schema.positive(),
+  Schema.brand(FloatQuantityPositiveType)
+);
+
+const PrimaryKeyIndexType = Symbol("@@PrimaryKeyIndex");
+export const PrimaryKeyIndex = Schema.NonNegative.pipe(
+  Schema.brand(PrimaryKeyIndexType)
+);
 
 export const EmptyStringAsUndefined = Schema.String.pipe(
   Schema.transform(Schema.UndefinedOr(Schema.String), {
@@ -21,9 +33,10 @@ export const EmptyStringAsUndefined = Schema.String.pipe(
   })
 );
 
-export const EmptyQuantityAsUndefined = Schema.NonNegative.pipe(
-  Schema.transform(Schema.UndefinedOr(Schema.NonNegative), {
+export const EmptyQuantityAsUndefined = FloatQuantityNonNegative.pipe(
+  Schema.transform(Schema.UndefinedOr(FloatQuantityNonNegative), {
     decode: (value) => (value === 0 ? undefined : value),
-    encode: (value) => (value === undefined ? 0 : value),
+    encode: (value) =>
+      FloatQuantityNonNegative.make(value === undefined ? 0 : value),
   })
 );

@@ -1,10 +1,15 @@
 import { Schema } from "effect";
+import {
+  FloatQuantityNonNegative,
+  FloatQuantityPositive,
+  PrimaryKeyIndex,
+} from "./shared";
 
 export class _PlanInsert extends Schema.Class<_PlanInsert>("_PlanInsert")({
-  calories: Schema.Positive,
-  fatsRatio: Schema.Positive,
-  carbohydratesRatio: Schema.Positive,
-  proteinsRatio: Schema.Positive,
+  calories: FloatQuantityPositive,
+  fatsRatio: FloatQuantityNonNegative,
+  carbohydratesRatio: FloatQuantityNonNegative,
+  proteinsRatio: FloatQuantityNonNegative,
 }) {
   static readonly WithValidation = this.pipe(
     Schema.filter((params) =>
@@ -17,11 +22,11 @@ export class _PlanInsert extends Schema.Class<_PlanInsert>("_PlanInsert")({
 }
 
 export class _PlanUpdate extends Schema.Class<_PlanUpdate>("_PlanUpdate")({
-  id: Schema.Number,
-  calories: Schema.Positive,
-  fatsRatio: Schema.Positive,
-  carbohydratesRatio: Schema.Positive,
-  proteinsRatio: Schema.Positive,
+  id: PrimaryKeyIndex,
+  calories: FloatQuantityPositive,
+  fatsRatio: FloatQuantityNonNegative,
+  carbohydratesRatio: FloatQuantityNonNegative,
+  proteinsRatio: FloatQuantityNonNegative,
 }) {
   static readonly WithValidation = this.pipe(
     Schema.filter((params) =>
@@ -34,5 +39,5 @@ export class _PlanUpdate extends Schema.Class<_PlanUpdate>("_PlanUpdate")({
 }
 
 export class PlanRemove extends Schema.Class<PlanRemove>("PlanRemove")({
-  id: Schema.Number,
+  id: PrimaryKeyIndex,
 }) {}
