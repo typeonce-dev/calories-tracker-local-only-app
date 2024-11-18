@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS "food" (
 	"carbohydrates" integer NOT NULL,
 	"fibers" integer DEFAULT 0 NOT NULL,
 	"sugars" integer DEFAULT 0 NOT NULL,
-	"proteins" integer NOT NULL
+	"proteins" integer NOT NULL,
+	CONSTRAINT "food_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "plan" (

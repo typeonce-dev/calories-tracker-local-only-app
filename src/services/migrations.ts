@@ -1,5 +1,5 @@
 // @ts-expect-error: import
-import v0000 from "../drizzle/0000_third_wendigo.sql?raw";
+import v0000 from "../drizzle/0000_thin_wilson_fisk.sql?raw";
 
 import type { PGlite } from "@electric-sql/pglite";
 import { Data, Effect } from "effect";

@@ -1,5 +1,5 @@
 import { and, eq, not } from "drizzle-orm";
-import { Data, DateTime, Effect, flow, Schema } from "effect";
+import { Data, DateTime, Effect, flow, pipe, Schema } from "effect";
 import {
   DailyLogInsert,
   DailyLogSelect,
@@ -26,16 +26,21 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
   effect: Effect.gen(function* () {
     const { query } = yield* Pglite;
 
-    const execute = <A, I, T, E>(
-      schema: Schema.Schema<A, I>,
-      exec: (values: I) => Effect.Effect<T, E>
-    ) =>
-      flow(
-        Schema.decode(schema),
-        Effect.flatMap(Schema.encode(schema)),
-        Effect.mapError((error) => new WriteApiError({ cause: error })),
-        Effect.flatMap(exec)
-      );
+    const execute =
+      <A, I, T, E>(
+        schema: Schema.Schema<A, I>,
+        exec: (values: I) => Effect.Effect<T, E>
+      ) =>
+      (input: I) =>
+        pipe(
+          input,
+          Schema.decode(schema),
+          Effect.tap((decoded) => Effect.log("Decoded API", decoded)),
+          Effect.andThen(Schema.encodeUnknown(schema)(input)),
+          Effect.tap((encoded) => Effect.log("Encoded API", encoded)),
+          Effect.mapError((error) => new WriteApiError({ cause: error })),
+          Effect.flatMap(exec)
+        );
 
     return {
       createDailyLog: flow(

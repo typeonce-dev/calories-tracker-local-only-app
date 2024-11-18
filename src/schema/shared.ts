@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-const FloatQuantity = Schema.Number.pipe(
+const FloatQuantityInsert = Schema.Number.pipe(
   Schema.transform(Schema.Number, {
     decode: (value) => value / 10,
     encode: (value) => value * 10,
@@ -10,13 +10,13 @@ const FloatQuantity = Schema.Number.pipe(
 export const Meal = Schema.Literal("breakfast", "lunch", "dinner", "snacks");
 
 const FloatQuantityNonNegativeType = Symbol("@@FloatQuantityNonNegative");
-export const FloatQuantityNonNegative = FloatQuantity.pipe(
+export const FloatQuantityNonNegative = FloatQuantityInsert.pipe(
   Schema.nonNegative(),
   Schema.brand(FloatQuantityNonNegativeType)
 );
 
 const FloatQuantityPositiveType = Symbol("@@FloatQuantityPositive");
-export const FloatQuantityPositive = FloatQuantity.pipe(
+export const FloatQuantityPositive = FloatQuantityInsert.pipe(
   Schema.positive(),
   Schema.brand(FloatQuantityPositiveType)
 );
