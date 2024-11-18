@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
-import { DateTime } from "effect";
+import { DateTime, Either, Match } from "effect";
 import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { Group, Text } from "react-aria-components";
 import { useDailyLog } from "~/hooks/use-daily-log";
 import { useDailyPlan } from "~/hooks/use-daily-plan";
 import { DailyLogSelect } from "~/schema/daily-log";
+import { ServingSelectWithFoods } from "~/schema/serving";
 import { Meal } from "~/schema/shared";
 import DailyPlanCard from "./DailyPlanCard";
 import SelectFood from "./SelectFood";
@@ -17,26 +18,6 @@ export default function DailyLogOverview({
 }) {
   const dailyLog = useDailyLog(date);
   const dailyPlan = useDailyPlan(date);
-  const totalCalories =
-    dailyLog?.rows.reduce(
-      (acc, log) => acc + (log.calories / 100) * log.quantity,
-      0
-    ) ?? 0;
-  const totalFats =
-    dailyLog?.rows.reduce(
-      (acc, log) => acc + (log.fats / 100) * log.quantity,
-      0
-    ) ?? 0;
-  const totalCarbohydrates =
-    dailyLog?.rows.reduce(
-      (acc, log) => acc + (log.carbohydrates / 100) * log.quantity,
-      0
-    ) ?? 0;
-  const totalProteins =
-    dailyLog?.rows.reduce(
-      (acc, log) => acc + (log.proteins / 100) * log.quantity,
-      0
-    ) ?? 0;
   return (
     <div>
       <div className="flex flex-col gap-y-6">
@@ -57,40 +38,62 @@ export default function DailyLogOverview({
         </div>
 
         <div>
-          {dailyPlan !== undefined && (
-            <DailyPlanCard
-              plan={dailyPlan}
-              date={date}
-              totalCalories={totalCalories}
-              totalCarbohydrates={totalCarbohydrates}
-              totalFats={totalFats}
-              totalProteins={totalProteins}
-            />
-          )}
+          {dailyPlan !== undefined &&
+            Either.match(dailyLog, {
+              onLeft: Match.valueTags({
+                MissingData: () => <p>No logs found</p>,
+                InvalidData: ({ parseError }) => (
+                  <p>Invalid data: {JSON.stringify(parseError, null, 2)}</p>
+                ),
+              }),
+              onRight: (_) => (
+                <DailyPlanCard
+                  plan={dailyPlan}
+                  date={date}
+                  totalCalories={ServingSelectWithFoods.totalCalories(_)}
+                  totalCarbohydrates={ServingSelectWithFoods.totalCarbohydrates(
+                    _
+                  )}
+                  totalFats={ServingSelectWithFoods.totalFats(_)}
+                  totalProteins={ServingSelectWithFoods.totalProteins(_)}
+                />
+              ),
+            })}
         </div>
       </div>
 
-      {Meal.literals.map((meal) => {
-        const servings =
-          dailyLog?.rows.filter((log) => log.meal === meal) ?? [];
-        return (
-          <div
-            key={meal}
-            className="flex flex-col items-center justify-center gap-y-4 border border-slate-400 bg-white py-6"
-          >
-            <Group className="flex items-center justify-between w-full px-6">
-              <h2 className="font-bold capitalize">{meal}</h2>
-              <SelectFood dailyLogDate={date} meal={meal} />
-            </Group>
-            {servings.length > 0 && (
-              <div className="w-full flex flex-col divide-y divide-slate-200">
-                {servings.map((log) => (
-                  <ServingCard key={log.id} log={log} />
-                ))}
-              </div>
-            )}
-          </div>
-        );
+      {Either.match(dailyLog, {
+        onLeft: Match.valueTags({
+          MissingData: () => <p>No logs found</p>,
+          InvalidData: ({ parseError }) => (
+            <p>Invalid data: {JSON.stringify(parseError, null, 2)}</p>
+          ),
+        }),
+        onRight: (_) => (
+          <>
+            {Meal.literals.map((meal) => {
+              const servings = _.filter((log) => log.meal === meal) ?? [];
+              return (
+                <div
+                  key={meal}
+                  className="flex flex-col items-center justify-center gap-y-4 border border-slate-400 bg-white py-6"
+                >
+                  <Group className="flex items-center justify-between w-full px-6">
+                    <h2 className="font-bold capitalize">{meal}</h2>
+                    <SelectFood dailyLogDate={date} meal={meal} />
+                  </Group>
+                  {servings.length > 0 && (
+                    <div className="w-full flex flex-col divide-y divide-slate-200">
+                      {servings.map((log) => (
+                        <ServingCard key={log.id} log={log} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        ),
       })}
     </div>
   );

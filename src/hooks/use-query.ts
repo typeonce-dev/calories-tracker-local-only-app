@@ -14,13 +14,13 @@ export const useQuery = <A, I>(
 ) => {
   const orm = usePgliteDrizzle();
   const { params, sql } = query(orm);
-  const results = useLiveQuery<A>(sql, params);
+  const results = useLiveQuery<I>(sql, params);
   return pipe(
     results?.rows,
     Either.fromNullable(() => new MissingData()),
     Either.flatMap(
       flow(
-        Schema.encodeEither(Schema.Array(schema)),
+        Schema.decodeEither(Schema.Array(schema)),
         Either.mapLeft((parseError) => new InvalidData({ parseError }))
       )
     )

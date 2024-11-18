@@ -2,8 +2,8 @@ import { Schema } from "effect";
 
 const FloatQuantity = Schema.Number.pipe(
   Schema.transform(Schema.Number, {
-    decode: (value) => value * 10,
-    encode: (value) => value / 10,
+    decode: (value) => value / 10,
+    encode: (value) => value * 10,
   })
 );
 

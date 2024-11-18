@@ -41,3 +41,15 @@ export class _PlanUpdate extends Schema.Class<_PlanUpdate>("_PlanUpdate")({
 export class PlanRemove extends Schema.Class<PlanRemove>("PlanRemove")({
   id: PrimaryKeyIndex,
 }) {}
+
+export class PlanSelectWithLogs extends Schema.Class<PlanSelectWithLogs>(
+  "PlanSelectWithLogs"
+)({
+  id: PrimaryKeyIndex,
+  calories: FloatQuantityPositive,
+  fatsRatio: FloatQuantityNonNegative,
+  carbohydratesRatio: FloatQuantityNonNegative,
+  proteinsRatio: FloatQuantityNonNegative,
+  isCurrent: Schema.Boolean,
+  logs: Schema.NonNegative,
+}) {}
