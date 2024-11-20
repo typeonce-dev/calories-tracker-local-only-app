@@ -71,7 +71,7 @@ export const machine = setup({
                 api.createServing({
                   foodId,
                   quantity: quantity.getSnapshot().context.value,
-                  dailyLogDate: DailyLogSelect.formatDate(dailyLog.date),
+                  dailyLogDate: dailyLog.date,
                   ...input,
                 })
               )

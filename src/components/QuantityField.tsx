@@ -4,6 +4,7 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
 import type { numberFieldMachine } from "~/machines/number-field";
+import type { optionalNumberFieldMachine } from "~/machines/optional-number-field";
 import { validate } from "~/utils";
 import { NumberField } from "./NumberField";
 import { FieldError, Input, Label } from "./TextField";
@@ -14,7 +15,9 @@ export default function QuantityField({
   schema,
   name,
 }: {
-  actor: ActorRefFrom<typeof numberFieldMachine>;
+  actor: ActorRefFrom<
+    typeof numberFieldMachine | typeof optionalNumberFieldMachine
+  >;
   label: string;
   name: string;
   schema: Schema.Schema.AnyNoContext;
@@ -25,7 +28,7 @@ export default function QuantityField({
       name={name}
       step={0.1}
       minValue={0}
-      value={context.value}
+      value={context.value !== undefined ? context.value / 10 : undefined}
       validate={validate(schema)}
       onChange={(value) => actor.send({ type: "update", value })}
       className="flex flex-col gap-y-1 items-center w-full"

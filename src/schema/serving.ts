@@ -1,21 +1,21 @@
 import { Schema } from "effect";
-import { DailyLogSelect } from "./daily-log";
 import { FoodSelect } from "./food";
-import { FloatQuantityPositive, Meal, PrimaryKeyIndex } from "./shared";
+import { FloatQuantityInsertPositive, Meal, PrimaryKeyIndex } from "./shared";
 
+// https://effect.website/play#2538c3ae8d4f
 export class ServingInsert extends Schema.Class<ServingInsert>("ServingInsert")(
   {
     foodId: PrimaryKeyIndex,
-    quantity: FloatQuantityPositive,
+    quantity: FloatQuantityInsertPositive,
     meal: Meal,
-    dailyLogDate: DailyLogSelect.fields.date,
+    dailyLogDate: Schema.DateTimeUtcFromSelf,
   }
 ) {}
 
 export class ServingUpdate extends Schema.Class<ServingUpdate>("ServingUpdate")(
   {
     id: PrimaryKeyIndex,
-    quantity: FloatQuantityPositive,
+    quantity: FloatQuantityInsertPositive,
   }
 ) {}
 
@@ -30,7 +30,7 @@ export class ServingSelectWithFoods extends Schema.Class<ServingSelectWithFoods>
 )({
   id: PrimaryKeyIndex,
   meal: Meal,
-  quantity: FloatQuantityPositive,
+  quantity: FloatQuantityInsertPositive,
   foodId: FoodSelect.fields.id,
   name: FoodSelect.fields.name,
   brand: FoodSelect.fields.brand,

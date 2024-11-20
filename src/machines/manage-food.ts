@@ -10,6 +10,7 @@ import type { foodTable } from "~/schema/drizzle";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
 import { numberFieldMachine } from "./number-field";
+import { optionalNumberFieldMachine } from "./optional-number-field";
 import { textFieldMachine } from "./text-field";
 
 interface Context {
@@ -19,10 +20,10 @@ interface Context {
   fats: ActorRefFrom<typeof numberFieldMachine>;
   carbohydrates: ActorRefFrom<typeof numberFieldMachine>;
   proteins: ActorRefFrom<typeof numberFieldMachine>;
-  fatsSaturated: ActorRefFrom<typeof numberFieldMachine>;
-  salt: ActorRefFrom<typeof numberFieldMachine>;
-  fibers: ActorRefFrom<typeof numberFieldMachine>;
-  sugars: ActorRefFrom<typeof numberFieldMachine>;
+  fatsSaturated: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  salt: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  fibers: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  sugars: ActorRefFrom<typeof optionalNumberFieldMachine>;
   submitError: string | null;
 }
 
@@ -106,14 +107,16 @@ export const machine = setup({
     proteins: spawn(numberFieldMachine, {
       input: { initialValue: input?.proteins },
     }),
-    fatsSaturated: spawn(numberFieldMachine, {
+    fatsSaturated: spawn(optionalNumberFieldMachine, {
       input: { initialValue: input?.fatsSaturated },
     }),
-    salt: spawn(numberFieldMachine, { input: { initialValue: input?.salt } }),
-    fibers: spawn(numberFieldMachine, {
+    salt: spawn(optionalNumberFieldMachine, {
+      input: { initialValue: input?.salt },
+    }),
+    fibers: spawn(optionalNumberFieldMachine, {
       input: { initialValue: input?.fibers },
     }),
-    sugars: spawn(numberFieldMachine, {
+    sugars: spawn(optionalNumberFieldMachine, {
       input: { initialValue: input?.sugars },
     }),
   }),

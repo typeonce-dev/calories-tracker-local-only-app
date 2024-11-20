@@ -6,7 +6,7 @@ import { numberFieldMachine } from "./number-field";
 
 export const machine = setup({
   types: {
-    input: {} as { quantity: number },
+    input: {} as { quantity: number | undefined },
     context: {} as {
       quantity: ActorRefFrom<typeof numberFieldMachine>;
     },

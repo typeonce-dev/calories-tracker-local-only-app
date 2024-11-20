@@ -1,42 +1,36 @@
 import { Schema } from "effect";
 
-const FloatQuantityInsert = Schema.Number.pipe(
-  Schema.transform(Schema.Number, {
+export const FloatQuantityInsert = Schema.NonNegative.pipe(
+  Schema.transform(Schema.NonNegative, {
     decode: (value) => value / 10,
     encode: (value) => value * 10,
   })
 );
 
-export const Meal = Schema.Literal("breakfast", "lunch", "dinner", "snacks");
-
-const FloatQuantityNonNegativeType = Symbol("@@FloatQuantityNonNegative");
-export const FloatQuantityNonNegative = FloatQuantityInsert.pipe(
-  Schema.nonNegative(),
-  Schema.brand(FloatQuantityNonNegativeType)
+export const FloatQuantityOrUndefined = Schema.UndefinedOr(
+  Schema.NonNegative
+).pipe(
+  Schema.transform(Schema.UndefinedOr(FloatQuantityInsert), {
+    decode: (value) => (value === undefined ? undefined : value / 10),
+    encode: (value) => (value === undefined ? undefined : value * 10),
+  })
 );
 
-const FloatQuantityPositiveType = Symbol("@@FloatQuantityPositive");
-export const FloatQuantityPositive = FloatQuantityInsert.pipe(
-  Schema.positive(),
-  Schema.brand(FloatQuantityPositiveType)
+export const FloatQuantityInsertPositive = FloatQuantityInsert.pipe(
+  Schema.filter((value) =>
+    value === undefined || value >= 0 ? true : "Quantity must be non positive"
+  )
 );
 
-const PrimaryKeyIndexType = Symbol("@@PrimaryKeyIndex");
 export const PrimaryKeyIndex = Schema.NonNegative.pipe(
-  Schema.brand(PrimaryKeyIndexType)
+  Schema.brand("PrimaryKeyIndex")
 );
 
-export const EmptyStringAsUndefined = Schema.String.pipe(
-  Schema.transform(Schema.UndefinedOr(Schema.String), {
-    decode: (value) => (value.trim().length === 0 ? undefined : value),
-    encode: (value) => (value === undefined ? "" : value),
+export const EmptyStringAsUndefined = Schema.UndefinedOr(Schema.String).pipe(
+  Schema.transform(Schema.String, {
+    decode: (value) => (value === undefined ? "" : value),
+    encode: (value) => (value.trim().length === 0 ? undefined : value),
   })
 );
 
-export const EmptyQuantityAsUndefined = FloatQuantityNonNegative.pipe(
-  Schema.transform(Schema.UndefinedOr(FloatQuantityNonNegative), {
-    decode: (value) => (value === 0 ? undefined : value),
-    encode: (value) =>
-      FloatQuantityNonNegative.make(value === undefined ? 0 : value),
-  })
-);
+export const Meal = Schema.Literal("breakfast", "lunch", "dinner", "snacks");

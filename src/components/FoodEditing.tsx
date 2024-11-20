@@ -4,6 +4,7 @@ import type React from "react";
 import { Form, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
 import type { numberFieldMachine } from "~/machines/number-field";
+import type { optionalNumberFieldMachine } from "~/machines/optional-number-field";
 import type { textFieldMachine } from "~/machines/text-field";
 import { FoodInsert } from "~/schema/food";
 import { validate } from "~/utils";
@@ -59,12 +60,12 @@ export default function FoodEditing({
   brandActor: ActorRefFrom<typeof textFieldMachine>;
   caloriesActor: ActorRefFrom<typeof numberFieldMachine>;
   carbohydratesActor: ActorRefFrom<typeof numberFieldMachine>;
-  sugarsActor: ActorRefFrom<typeof numberFieldMachine>;
-  fibersActor: ActorRefFrom<typeof numberFieldMachine>;
   proteinsActor: ActorRefFrom<typeof numberFieldMachine>;
   fatsActor: ActorRefFrom<typeof numberFieldMachine>;
-  fatsSaturatedActor: ActorRefFrom<typeof numberFieldMachine>;
-  saltActor: ActorRefFrom<typeof numberFieldMachine>;
+  fatsSaturatedActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  saltActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  sugarsActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  fibersActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
 }) {
   return (
     <Form
