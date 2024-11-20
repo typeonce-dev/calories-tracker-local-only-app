@@ -1,9 +1,9 @@
-import { Schema } from "effect";
+import { Number, Schema } from "effect";
 
 export const FloatQuantityInsert = Schema.NonNegative.pipe(
   Schema.transform(Schema.NonNegative, {
-    decode: (value) => value / 10,
-    encode: (value) => value * 10,
+    decode: (value) => Number.round(value / 10, 1),
+    encode: (value) => Number.round(value * 10, 2),
   })
 );
 

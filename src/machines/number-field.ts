@@ -21,6 +21,6 @@ export const numberFieldMachine = fromTransition(
       Match.exhaustive
     ),
   ({ input }: { input?: { initialValue?: number } }) => ({
-    value: input?.initialValue ?? 0,
+    value: input?.initialValue !== undefined ? input.initialValue * 10 : 0,
   })
 );

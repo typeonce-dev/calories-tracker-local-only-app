@@ -1,13 +1,12 @@
 import { useMachine } from "@xstate/react";
 import { Button, Form } from "react-aria-components";
 import { machine } from "~/machines/manage-plan";
-import { _PlanUpdate } from "~/schema/plan";
-import type { PlanWithLogsCount } from "~/type";
+import { _PlanUpdate, type PlanSelectWithLogs } from "~/schema/plan";
 import { cn } from "~/utils";
 import PlanInfo from "./PlanInfo";
 import QuantityField from "./QuantityField";
 
-export default function PlanCard({ plan }: { plan: PlanWithLogsCount }) {
+export default function PlanCard({ plan }: { plan: PlanSelectWithLogs }) {
   const [snapshot, send] = useMachine(machine, {
     input: {
       calories: plan.calories,

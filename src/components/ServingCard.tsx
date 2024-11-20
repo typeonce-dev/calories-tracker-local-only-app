@@ -1,11 +1,11 @@
 import { Group } from "react-aria-components";
-import type { ServingFood } from "~/type";
+import type { ServingSelectWithFoods } from "~/schema/serving";
 import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./Icons";
 import ManageServing from "./ManageServing";
 
 const format = (value: number, quantity: number) => (value / 100) * quantity;
 
-export default function ServingCard({ log }: { log: ServingFood }) {
+export default function ServingCard({ log }: { log: ServingSelectWithFoods }) {
   const calories = format(log.calories, log.quantity);
   const carbohydrates = format(log.carbohydrates, log.quantity);
   const proteins = format(log.proteins, log.quantity);

@@ -1,8 +1,7 @@
 import { useMachine } from "@xstate/react";
 import { Button as AriaButton, Group } from "react-aria-components";
 import { machine } from "~/machines/manage-serving";
-import { ServingUpdate } from "~/schema/serving";
-import type { ServingFood } from "~/type";
+import { ServingUpdate, type ServingSelectWithFoods } from "~/schema/serving";
 import { Button } from "./Button";
 import { Dialog, DialogTrigger } from "./Dialog";
 import { Modal, ModalOverlay } from "./Modal";
@@ -12,7 +11,7 @@ export default function ManageServing({
   children,
   log,
 }: {
-  log: ServingFood;
+  log: ServingSelectWithFoods;
   children: React.ReactNode;
 }) {
   const [snapshot, send] = useMachine(machine, {

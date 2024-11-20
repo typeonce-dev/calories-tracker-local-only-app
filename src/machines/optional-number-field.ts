@@ -24,6 +24,7 @@ export const optionalNumberFieldMachine = fromTransition(
       Match.exhaustive
     ),
   ({ input }: { input?: { initialValue?: number } }) => ({
-    value: input?.initialValue,
+    value:
+      input?.initialValue !== undefined ? input.initialValue * 10 : undefined,
   })
 );
