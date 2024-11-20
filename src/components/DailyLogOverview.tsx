@@ -1,9 +1,10 @@
-import { Link, Navigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { DateTime, Either, Match } from "effect";
 import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { Group, Text } from "react-aria-components";
 import { useDailyLog } from "~/hooks/use-daily-log";
 import { useDailyPlan } from "~/hooks/use-daily-plan";
+import { usePlans } from "~/hooks/use-plans";
 import { DailyLogSelect } from "~/schema/daily-log";
 import { ServingSelectWithFoods } from "~/schema/serving";
 import { Meal } from "~/schema/shared";
@@ -18,9 +19,15 @@ export default function DailyLogOverview({
 }) {
   const dailyLog = useDailyLog(date);
   const dailyPlan = useDailyPlan(date);
+  const plans = usePlans();
 
-  if (Either.isLeft(dailyPlan)) {
-    return <Navigate to="/" />;
+  if (Either.isLeft(plans) || plans.right.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-y-4">
+        <Text>No plan yet created</Text>
+        <Link to="/plan">Go to create plan</Link>
+      </div>
+    );
   }
 
   return (
@@ -43,7 +50,7 @@ export default function DailyLogOverview({
         </div>
 
         <div>
-          {dailyPlan !== undefined &&
+          {Either.isRight(dailyPlan) &&
             Either.match(dailyLog, {
               onLeft: Match.valueTags({
                 MissingData: () => <p>No logs found</p>,
