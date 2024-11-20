@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, Navigate } from "@tanstack/react-router";
 import { DateTime, Either, Match } from "effect";
 import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { Group, Text } from "react-aria-components";
@@ -18,6 +18,11 @@ export default function DailyLogOverview({
 }) {
   const dailyLog = useDailyLog(date);
   const dailyPlan = useDailyPlan(date);
+
+  if (Either.isLeft(dailyPlan)) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div>
       <div className="flex flex-col gap-y-6">
@@ -48,7 +53,7 @@ export default function DailyLogOverview({
               }),
               onRight: (_) => (
                 <DailyPlanCard
-                  plan={dailyPlan}
+                  plan={dailyPlan.right}
                   date={date}
                   totalCalories={ServingSelectWithFoods.totalCalories(_)}
                   totalCarbohydrates={ServingSelectWithFoods.totalCarbohydrates(

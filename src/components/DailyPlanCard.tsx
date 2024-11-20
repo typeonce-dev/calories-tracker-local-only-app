@@ -1,7 +1,7 @@
 import { Match } from "effect";
 import { Group, Label, ProgressBar } from "react-aria-components";
 import type { DailyLogSelect } from "~/schema/daily-log";
-import type { planTable } from "~/schema/drizzle";
+import type { PlanSelectDaily } from "~/schema/plan";
 import { cn } from "~/utils";
 import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./Icons";
 
@@ -87,7 +87,7 @@ export default function DailyPlanCard({
   totalProteins,
   date,
 }: {
-  plan: typeof planTable.$inferSelect;
+  plan: PlanSelectDaily;
   date: typeof DailyLogSelect.fields.date.Type;
   totalCalories: number;
   totalFats: number;

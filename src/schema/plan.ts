@@ -53,3 +53,14 @@ export class PlanSelectWithLogs extends Schema.Class<PlanSelectWithLogs>(
   isCurrent: Schema.Boolean,
   logs: Schema.NonNegative,
 }) {}
+
+export class PlanSelectDaily extends Schema.Class<PlanSelectDaily>(
+  "PlanSelectDaily"
+)({
+  id: PrimaryKeyIndex,
+  calories: FloatQuantityInsertPositive,
+  fatsRatio: FloatQuantityInsert,
+  carbohydratesRatio: FloatQuantityInsert,
+  proteinsRatio: FloatQuantityInsert,
+  isCurrent: Schema.Boolean,
+}) {}

@@ -1,6 +1,14 @@
 import { useLiveQuery } from "@electric-sql/pglite-react";
 import type { Query } from "drizzle-orm";
-import { Data, Either, flow, pipe, Schema, type ParseResult } from "effect";
+import {
+  Array,
+  Data,
+  Either,
+  flow,
+  pipe,
+  Schema,
+  type ParseResult,
+} from "effect";
 import { usePgliteDrizzle } from "./use-pglite-drizzle";
 
 class MissingData extends Data.TaggedError("MissingData")<{}> {}
@@ -22,6 +30,21 @@ export const useQuery = <A, I>(
       flow(
         Schema.decodeEither(Schema.Array(schema)),
         Either.mapLeft((parseError) => new InvalidData({ parseError }))
+      )
+    )
+  );
+};
+
+export const useQuerySingle = <A, I>(
+  ...args: Parameters<typeof useQuery<A, I>>
+) => {
+  const results = useQuery(...args);
+  return pipe(
+    results,
+    Either.flatMap(
+      flow(
+        Array.head,
+        Either.fromOption(() => new MissingData())
       )
     )
   );
