@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { DateTime, Either, Match } from "effect";
+import { DateTime, Either, Match, pipe } from "effect";
 import { MoveLeftIcon, MoveRightIcon } from "lucide-react";
 import { Group, Text } from "react-aria-components";
 import { useDailyLog } from "~/hooks/use-daily-log";
@@ -11,6 +11,7 @@ import { Meal } from "~/schema/shared";
 import DailyPlanCard from "./DailyPlanCard";
 import SelectFood from "./SelectFood";
 import ServingCard from "./ServingCard";
+import Spinner from "./Spinner";
 
 export default function DailyLogOverview({
   date,
@@ -21,7 +22,25 @@ export default function DailyLogOverview({
   const dailyPlan = useDailyPlan(date);
   const plans = usePlans();
 
-  if (Either.isLeft(plans) || plans.right.length === 0) {
+  if (Either.isLeft(plans)) {
+    return pipe(
+      plans.left,
+      Match.valueTags({
+        MissingData: () => (
+          <div className="flex items-center justify-center inset-0 bg-white">
+            <Spinner />
+          </div>
+        ),
+        InvalidData: ({ parseError }) => (
+          <div className="flex items-center justify-center inset-0 bg-white">
+            <p className="text-sm">
+              Invalid data: {JSON.stringify(parseError, null, 2)}
+            </p>
+          </div>
+        ),
+      })
+    );
+  } else if (plans.right.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-y-4">
         <Text>No plan yet created</Text>
