@@ -55,6 +55,7 @@ export const machine = setup({
                   const planOption = yield* readApi.getCurrentPlan.pipe(
                     Effect.option
                   );
+
                   if (Option.isNone(planOption)) {
                     return yield* Effect.fail("No plan selected");
                   }

@@ -22,13 +22,14 @@ export default function QuantityField({
   name: string;
   schema: Schema.Schema.AnyNoContext;
 }) {
-  const context = useSelector(actor, (snapshot) => snapshot.context);
+  const contextValue = useSelector(actor, (snapshot) => snapshot.context.value);
+  const value = contextValue !== undefined ? contextValue / 10 : undefined;
   return (
     <NumberField
       name={name}
       step={0.1}
       minValue={0}
-      value={context.value !== undefined ? context.value / 10 : undefined}
+      value={value ?? 0}
       validate={validate(schema)}
       onChange={(value) => actor.send({ type: "update", value })}
       className="flex flex-col gap-y-1 items-center w-full"
@@ -49,7 +50,7 @@ export default function QuantityField({
           <PlusIcon size={12} />
         </Button>
       </Group>
-      <Group>
+      <Group className="text-center">
         <FieldError />
       </Group>
     </NumberField>

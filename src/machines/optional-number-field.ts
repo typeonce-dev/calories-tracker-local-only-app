@@ -10,16 +10,19 @@ type Event =
   | { type: "reset"; value?: number };
 
 export const optionalNumberFieldMachine = fromTransition(
-  (state: Context, event: Event): Context => ({
-    ...state,
-    ...(Match.value(event).pipe(
+  (_: Context, event: Event): Context =>
+    Match.value(event).pipe(
       Match.when({ type: "update" }, (event) => ({
-        value: event.value === 0 ? undefined : event.value * 10,
+        value:
+          Number.isNaN(event.value) || event.value === 0
+            ? undefined
+            : event.value * 10,
       })),
-      Match.when({ type: "reset" }, (event) => ({ value: event.value ?? 0 })),
+      Match.when({ type: "reset" }, (event) => ({
+        value: event.value ?? 0,
+      })),
       Match.exhaustive
-    ) satisfies Partial<Context>),
-  }),
+    ),
   ({ input }: { input?: { initialValue?: number } }) => ({
     value: input?.initialValue,
   })

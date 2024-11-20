@@ -21,8 +21,13 @@ const Input = ({ className, ...props }: Aria.InputProps) => {
   );
 };
 
-const FieldError = ({ ...props }: Aria.FieldErrorProps) => {
-  return <Aria.FieldError {...props} />;
+const FieldError = ({ className, ...props }: Aria.FieldErrorProps) => {
+  return (
+    <Aria.FieldError
+      className={cn("text-rose-600 text-xs", className)}
+      {...props}
+    />
+  );
 };
 
 export { FieldError, Input, Label, TextField };
