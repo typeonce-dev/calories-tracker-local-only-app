@@ -11,9 +11,6 @@ importers:
       '@effect/platform':
         specifier: ^0.69.20
         version: 0.69.20(effect@3.10.13)
-      '@effect/platform-browser':
-        specifier: ^0.48.20
-        version: 0.48.20(@effect/platform@0.69.20(effect@3.10.13))(effect@3.10.13)
       '@electric-sql/pglite':
         specifier: ^0.2.13
         version: 0.2.13
@@ -631,12 +628,6 @@ packages:
 
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
-
-  '@effect/platform-browser@0.48.20':
-    resolution: {integrity: sha512-XEGygJkskguAn/BKhsrZNhtf1iw245g/zu9w06gvSG5coWxrW67CgU6r9JiblgscrXH03iSherQ4HLBMMx2+3Q==}
-    peerDependencies:
-      '@effect/platform': ^0.69.20
-      effect: ^3.10.13
 
   '@effect/platform@0.69.20':
     resolution: {integrity: sha512-xO96rj+719UBNYzuC+KKDyzDNXZM6VnaNfSEPWWgmFI74ytiWa/VyeJFHwOVMdUvgAnvmPk4P7LO5YHMvNv46A==}
@@ -4259,12 +4250,6 @@ snapshots:
   '@canvas/image-data@1.0.0': {}
 
   '@drizzle-team/brocli@0.10.2': {}
-
-  '@effect/platform-browser@0.48.20(@effect/platform@0.69.20(effect@3.10.13))(effect@3.10.13)':
-    dependencies:
-      '@effect/platform': 0.69.20(effect@3.10.13)
-      effect: 3.10.13
-      multipasta: 0.2.5
 
   '@effect/platform@0.69.20(effect@3.10.13)':
     dependencies:
