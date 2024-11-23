@@ -60,7 +60,7 @@ The app is client-side and works completely in the browser, so there is no compl
 
 A basic knowledge of `effect` is recommended to understand how the code is organized.
 
-> You can take a quick look at the [Effect: Beginners Complete Getting Started course](/course/effect-beginners-complete-getting-started) to get familiar with the basics of `effect`.
+> You can take a quick look at the [Effect: Beginners Complete Getting Started course](https://www.typeonce.dev/course/effect-beginners-complete-getting-started) to get familiar with the basics of `effect`.
 
 The local database setup using PGlite is explained in the course, so no previous knowledge is required.
 
