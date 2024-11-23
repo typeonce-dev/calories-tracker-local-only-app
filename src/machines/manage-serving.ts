@@ -2,13 +2,13 @@ import { Effect } from "effect";
 import { assertEvent, fromPromise, setup, type ActorRefFrom } from "xstate";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
-import { numberFieldMachine } from "./number-field";
+import { numberFieldActor } from "./number-field";
 
 export const machine = setup({
   types: {
     input: {} as { quantity: number | undefined },
     context: {} as {
-      quantity: ActorRefFrom<typeof numberFieldMachine>;
+      quantity: ActorRefFrom<typeof numberFieldActor>;
     },
     events: {} as
       | { type: "serving.update"; id: number }
@@ -39,7 +39,7 @@ export const machine = setup({
 }).createMachine({
   id: "manage-serving",
   context: ({ spawn, input }) => ({
-    quantity: spawn(numberFieldMachine, {
+    quantity: spawn(numberFieldActor, {
       input: { initialValue: input.quantity },
     }),
   }),

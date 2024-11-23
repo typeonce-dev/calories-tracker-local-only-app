@@ -9,21 +9,21 @@ import {
 import type { foodTable } from "~/schema/drizzle";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
-import { numberFieldMachine } from "./number-field";
-import { optionalNumberFieldMachine } from "./optional-number-field";
-import { textFieldMachine } from "./text-field";
+import { numberFieldActor } from "./number-field";
+import { optionalNumberFieldActor } from "./optional-number-field";
+import { textFieldActor } from "./text-field";
 
 interface Context {
-  name: ActorRefFrom<typeof textFieldMachine>;
-  brand: ActorRefFrom<typeof textFieldMachine>;
-  calories: ActorRefFrom<typeof numberFieldMachine>;
-  fats: ActorRefFrom<typeof numberFieldMachine>;
-  carbohydrates: ActorRefFrom<typeof numberFieldMachine>;
-  proteins: ActorRefFrom<typeof numberFieldMachine>;
-  fatsSaturated: ActorRefFrom<typeof optionalNumberFieldMachine>;
-  salt: ActorRefFrom<typeof optionalNumberFieldMachine>;
-  fibers: ActorRefFrom<typeof optionalNumberFieldMachine>;
-  sugars: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  name: ActorRefFrom<typeof textFieldActor>;
+  brand: ActorRefFrom<typeof textFieldActor>;
+  calories: ActorRefFrom<typeof numberFieldActor>;
+  fats: ActorRefFrom<typeof numberFieldActor>;
+  carbohydrates: ActorRefFrom<typeof numberFieldActor>;
+  proteins: ActorRefFrom<typeof numberFieldActor>;
+  fatsSaturated: ActorRefFrom<typeof optionalNumberFieldActor>;
+  salt: ActorRefFrom<typeof optionalNumberFieldActor>;
+  fibers: ActorRefFrom<typeof optionalNumberFieldActor>;
+  sugars: ActorRefFrom<typeof optionalNumberFieldActor>;
   submitError: string | null;
 }
 
@@ -93,30 +93,30 @@ export const machine = setup({
   id: "create-food",
   context: ({ spawn, input }) => ({
     submitError: null,
-    name: spawn(textFieldMachine, { input: { initialValue: input?.name } }),
-    brand: spawn(textFieldMachine, {
+    name: spawn(textFieldActor, { input: { initialValue: input?.name } }),
+    brand: spawn(textFieldActor, {
       input: { initialValue: input?.brand ?? undefined },
     }),
-    calories: spawn(numberFieldMachine, {
+    calories: spawn(numberFieldActor, {
       input: { initialValue: input?.calories },
     }),
-    fats: spawn(numberFieldMachine, { input: { initialValue: input?.fats } }),
-    carbohydrates: spawn(numberFieldMachine, {
+    fats: spawn(numberFieldActor, { input: { initialValue: input?.fats } }),
+    carbohydrates: spawn(numberFieldActor, {
       input: { initialValue: input?.carbohydrates },
     }),
-    proteins: spawn(numberFieldMachine, {
+    proteins: spawn(numberFieldActor, {
       input: { initialValue: input?.proteins },
     }),
-    fatsSaturated: spawn(optionalNumberFieldMachine, {
+    fatsSaturated: spawn(optionalNumberFieldActor, {
       input: { initialValue: input?.fatsSaturated },
     }),
-    salt: spawn(optionalNumberFieldMachine, {
+    salt: spawn(optionalNumberFieldActor, {
       input: { initialValue: input?.salt },
     }),
-    fibers: spawn(optionalNumberFieldMachine, {
+    fibers: spawn(optionalNumberFieldActor, {
       input: { initialValue: input?.fibers },
     }),
-    sugars: spawn(optionalNumberFieldMachine, {
+    sugars: spawn(optionalNumberFieldActor, {
       input: { initialValue: input?.sugars },
     }),
   }),

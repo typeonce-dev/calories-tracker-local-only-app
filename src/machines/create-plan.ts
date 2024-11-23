@@ -2,13 +2,13 @@ import { Effect } from "effect";
 import { assign, fromPromise, setup, type ActorRefFrom } from "xstate";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
-import { numberFieldMachine } from "./number-field";
+import { numberFieldActor } from "./number-field";
 
 interface Context {
-  calories: ActorRefFrom<typeof numberFieldMachine>;
-  fatsRatio: ActorRefFrom<typeof numberFieldMachine>;
-  carbohydratesRatio: ActorRefFrom<typeof numberFieldMachine>;
-  proteinsRatio: ActorRefFrom<typeof numberFieldMachine>;
+  calories: ActorRefFrom<typeof numberFieldActor>;
+  fatsRatio: ActorRefFrom<typeof numberFieldActor>;
+  carbohydratesRatio: ActorRefFrom<typeof numberFieldActor>;
+  proteinsRatio: ActorRefFrom<typeof numberFieldActor>;
   submitError: string | null;
 }
 
@@ -39,10 +39,10 @@ export const machine = setup({
 }).createMachine({
   id: "create-plan",
   context: ({ spawn }) => ({
-    calories: spawn(numberFieldMachine),
-    fatsRatio: spawn(numberFieldMachine),
-    carbohydratesRatio: spawn(numberFieldMachine),
-    proteinsRatio: spawn(numberFieldMachine),
+    calories: spawn(numberFieldActor),
+    fatsRatio: spawn(numberFieldActor),
+    carbohydratesRatio: spawn(numberFieldActor),
+    proteinsRatio: spawn(numberFieldActor),
     submitError: null,
   }),
   initial: "Idle",

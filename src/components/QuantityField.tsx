@@ -3,8 +3,8 @@ import type { Schema } from "effect";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { Button, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
-import type { numberFieldMachine } from "~/machines/number-field";
-import type { optionalNumberFieldMachine } from "~/machines/optional-number-field";
+import type { numberFieldActor } from "~/machines/number-field";
+import type { optionalNumberFieldActor } from "~/machines/optional-number-field";
 import { validate } from "~/utils";
 import { NumberField } from "./NumberField";
 import { FieldError, Input, Label } from "./TextField";
@@ -16,7 +16,7 @@ export default function QuantityField({
   name,
 }: {
   actor: ActorRefFrom<
-    typeof numberFieldMachine | typeof optionalNumberFieldMachine
+    typeof numberFieldActor | typeof optionalNumberFieldActor
   >;
   label: string;
   name: string;

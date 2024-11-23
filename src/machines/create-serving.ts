@@ -11,11 +11,11 @@ import type { Meal } from "~/schema/shared";
 import { ReadApi } from "~/services/read-api";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
-import { numberFieldMachine } from "./number-field";
+import { numberFieldActor } from "./number-field";
 
 interface Context {
   submitError: string | null;
-  quantity: ActorRefFrom<typeof numberFieldMachine>;
+  quantity: ActorRefFrom<typeof numberFieldActor>;
 }
 
 export const machine = setup({
@@ -85,7 +85,7 @@ export const machine = setup({
   id: "create-serving",
   context: ({ spawn }) => ({
     submitError: null,
-    quantity: spawn(numberFieldMachine),
+    quantity: spawn(numberFieldActor),
   }),
   initial: "Editing",
   states: {

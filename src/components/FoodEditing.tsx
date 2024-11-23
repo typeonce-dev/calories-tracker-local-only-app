@@ -3,9 +3,9 @@ import type { Schema } from "effect";
 import type React from "react";
 import { Form, Group } from "react-aria-components";
 import type { ActorRefFrom } from "xstate";
-import type { numberFieldMachine } from "~/machines/number-field";
-import type { optionalNumberFieldMachine } from "~/machines/optional-number-field";
-import type { textFieldMachine } from "~/machines/text-field";
+import type { numberFieldActor } from "~/machines/number-field";
+import type { optionalNumberFieldActor } from "~/machines/optional-number-field";
+import type { textFieldActor } from "~/machines/text-field";
 import { FoodInsert } from "~/schema/food";
 import { validate } from "~/utils";
 import QuantityField from "./QuantityField";
@@ -17,7 +17,7 @@ const TextFieldFromActor = ({
   schema,
   name,
 }: {
-  actor: ActorRefFrom<typeof textFieldMachine>;
+  actor: ActorRefFrom<typeof textFieldActor>;
   label: string;
   name: string;
   schema: Schema.Schema.AnyNoContext;
@@ -56,16 +56,16 @@ export default function FoodEditing({
 }: {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   children: React.ReactNode;
-  nameActor: ActorRefFrom<typeof textFieldMachine>;
-  brandActor: ActorRefFrom<typeof textFieldMachine>;
-  caloriesActor: ActorRefFrom<typeof numberFieldMachine>;
-  carbohydratesActor: ActorRefFrom<typeof numberFieldMachine>;
-  proteinsActor: ActorRefFrom<typeof numberFieldMachine>;
-  fatsActor: ActorRefFrom<typeof numberFieldMachine>;
-  fatsSaturatedActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
-  saltActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
-  sugarsActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
-  fibersActor: ActorRefFrom<typeof optionalNumberFieldMachine>;
+  nameActor: ActorRefFrom<typeof textFieldActor>;
+  brandActor: ActorRefFrom<typeof textFieldActor>;
+  caloriesActor: ActorRefFrom<typeof numberFieldActor>;
+  carbohydratesActor: ActorRefFrom<typeof numberFieldActor>;
+  proteinsActor: ActorRefFrom<typeof numberFieldActor>;
+  fatsActor: ActorRefFrom<typeof numberFieldActor>;
+  fatsSaturatedActor: ActorRefFrom<typeof optionalNumberFieldActor>;
+  saltActor: ActorRefFrom<typeof optionalNumberFieldActor>;
+  sugarsActor: ActorRefFrom<typeof optionalNumberFieldActor>;
+  fibersActor: ActorRefFrom<typeof optionalNumberFieldActor>;
 }) {
   return (
     <Form

@@ -9,7 +9,7 @@ type Event =
   | { type: "update"; value: number }
   | { type: "reset"; value?: number };
 
-export const optionalNumberFieldMachine = fromTransition(
+export const optionalNumberFieldActor = fromTransition(
   (_: Context, event: Event): Context =>
     Match.value(event).pipe(
       Match.when({ type: "update" }, (event) => ({

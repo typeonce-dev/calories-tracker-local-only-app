@@ -2,7 +2,7 @@ import { Effect } from "effect";
 import { assertEvent, fromPromise, setup, type ActorRefFrom } from "xstate";
 import { RuntimeClient } from "~/services/runtime-client";
 import { WriteApi } from "~/services/write-api";
-import { numberFieldMachine } from "./number-field";
+import { numberFieldActor } from "./number-field";
 
 export const machine = setup({
   types: {
@@ -13,10 +13,10 @@ export const machine = setup({
       proteinsRatio: number;
     },
     context: {} as {
-      calories: ActorRefFrom<typeof numberFieldMachine>;
-      fatsRatio: ActorRefFrom<typeof numberFieldMachine>;
-      carbohydratesRatio: ActorRefFrom<typeof numberFieldMachine>;
-      proteinsRatio: ActorRefFrom<typeof numberFieldMachine>;
+      calories: ActorRefFrom<typeof numberFieldActor>;
+      fatsRatio: ActorRefFrom<typeof numberFieldActor>;
+      carbohydratesRatio: ActorRefFrom<typeof numberFieldActor>;
+      proteinsRatio: ActorRefFrom<typeof numberFieldActor>;
     },
     events: {} as
       | { type: "plan.update"; id: number }
@@ -66,16 +66,16 @@ export const machine = setup({
 }).createMachine({
   id: "manage-serving",
   context: ({ spawn, input }) => ({
-    calories: spawn(numberFieldMachine, {
+    calories: spawn(numberFieldActor, {
       input: { initialValue: input.calories },
     }),
-    carbohydratesRatio: spawn(numberFieldMachine, {
+    carbohydratesRatio: spawn(numberFieldActor, {
       input: { initialValue: input.carbohydratesRatio },
     }),
-    fatsRatio: spawn(numberFieldMachine, {
+    fatsRatio: spawn(numberFieldActor, {
       input: { initialValue: input.fatsRatio },
     }),
-    proteinsRatio: spawn(numberFieldMachine, {
+    proteinsRatio: spawn(numberFieldActor, {
       input: { initialValue: input.proteinsRatio },
     }),
   }),
