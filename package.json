@@ -27,7 +27,6 @@
     "vite-tsconfig-paths": "^5.1.1"
   },
   "dependencies": {
-    "@effect/platform": "^0.69.20",
     "@electric-sql/pglite": "^0.2.13",
     "@electric-sql/pglite-react": "^0.2.13",
     "@tanstack/react-router": "^1.79.0",
