@@ -4,10 +4,10 @@ import { Form } from "react-aria-components";
 import { machine } from "~/machines/create-serving";
 import { ServingInsert } from "~/schema/serving";
 import type { Meal } from "~/schema/shared";
-import { Button } from "./Button";
-import { Dialog, DialogTrigger } from "./Dialog";
-import { Modal, ModalOverlay } from "./Modal";
 import QuantityField from "./QuantityField";
+import { Button } from "./ui/Button";
+import { Dialog, DialogTrigger } from "./ui/Dialog";
+import { Modal, ModalOverlay } from "./ui/Modal";
 
 export default function CreateServing({
   meal,

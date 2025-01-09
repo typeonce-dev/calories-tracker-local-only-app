@@ -4,9 +4,9 @@ import { usePlans } from "~/hooks/use-plans";
 import { machine } from "~/machines/manage-daily-log";
 import type { DailyLogSelect } from "~/schema/daily-log";
 import { cn } from "~/utils";
-import { Dialog, DialogTrigger } from "./Dialog";
-import { Modal, ModalOverlay } from "./Modal";
 import PlanInfo from "./PlanInfo";
+import { Dialog, DialogTrigger } from "./ui/Dialog";
+import { Modal, ModalOverlay } from "./ui/Modal";
 
 export default function UpdateDailyPlan({
   date,

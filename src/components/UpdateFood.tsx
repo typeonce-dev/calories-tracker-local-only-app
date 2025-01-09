@@ -2,10 +2,10 @@ import { useMachine } from "@xstate/react";
 import { UserPenIcon } from "lucide-react";
 import { machine } from "~/machines/manage-food";
 import type { FoodSelect } from "~/schema/food";
-import { Button } from "./Button";
-import { Dialog, DialogTrigger } from "./Dialog";
 import FoodEditing from "./FoodEditing";
-import { Modal, ModalOverlay } from "./Modal";
+import { Button } from "./ui/Button";
+import { Dialog, DialogTrigger } from "./ui/Dialog";
+import { Modal, ModalOverlay } from "./ui/Modal";
 
 export default function UpdateFood({ food }: { food: FoodSelect }) {
   const [snapshot, send] = useMachine(machine, { input: food });

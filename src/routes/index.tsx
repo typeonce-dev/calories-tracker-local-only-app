@@ -5,7 +5,7 @@ import { Group, Text } from "react-aria-components";
 import DailyPlanCard from "~/components/DailyPlanCard";
 import SelectFood from "~/components/SelectFood";
 import ServingCard from "~/components/ServingCard";
-import Spinner from "~/components/Spinner";
+import Spinner from "~/components/ui/Spinner";
 import { useDailyLog } from "~/hooks/use-daily-log";
 import { useDailyPlan } from "~/hooks/use-daily-plan";
 import { usePlans } from "~/hooks/use-plans";

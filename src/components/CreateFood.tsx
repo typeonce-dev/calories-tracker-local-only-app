@@ -1,9 +1,9 @@
 import { useMachine } from "@xstate/react";
 import { machine } from "~/machines/manage-food";
-import { Button } from "./Button";
-import { Dialog, DialogTrigger } from "./Dialog";
 import FoodEditing from "./FoodEditing";
-import { Modal, ModalOverlay } from "./Modal";
+import { Button } from "./ui/Button";
+import { Dialog, DialogTrigger } from "./ui/Dialog";
+import { Modal, ModalOverlay } from "./ui/Modal";
 
 export default function CreateFood() {
   const [snapshot, send] = useMachine(machine, { input: undefined });

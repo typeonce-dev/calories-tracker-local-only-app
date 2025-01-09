@@ -6,8 +6,8 @@ import type { ActorRefFrom } from "xstate";
 import type { numberFieldActor } from "~/machines/number-field";
 import type { optionalNumberFieldActor } from "~/machines/optional-number-field";
 import { validate } from "~/utils";
-import { NumberField } from "./NumberField";
-import { FieldError, Input, Label } from "./TextField";
+import { NumberField } from "./ui/NumberField";
+import { FieldError, Input, Label } from "./ui/TextField";
 
 export default function QuantityField({
   actor,

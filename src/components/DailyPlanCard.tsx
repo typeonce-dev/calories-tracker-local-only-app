@@ -2,7 +2,7 @@ import { Match } from "effect";
 import { Group, Label, ProgressBar } from "react-aria-components";
 import type { PlanSelectDaily } from "~/schema/plan";
 import { cn } from "~/utils";
-import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./Icons";
+import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./ui/Icons";
 
 type Label = "fat" | "carbohydrate" | "protein";
 const GramsForCalorie = Match.type<Label>().pipe(

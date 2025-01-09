@@ -4,8 +4,8 @@ import { useFoods } from "~/hooks/use-foods";
 import type { Meal } from "~/schema/shared";
 import CreateFood from "./CreateFood";
 import CreateServing from "./CreateServing";
-import { Dialog, DialogTrigger } from "./Dialog";
-import { Modal, ModalOverlay } from "./Modal";
+import { Dialog, DialogTrigger } from "./ui/Dialog";
+import { Modal, ModalOverlay } from "./ui/Modal";
 import UpdateFood from "./UpdateFood";
 
 export default function SelectFood({
