@@ -8,9 +8,8 @@ import {
 } from "xstate";
 import { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
-import { ReadApi } from "~/services/read-api";
+import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
-import { WriteApi } from "~/services/write-api";
 import { numberFieldActor } from "./number-field";
 
 interface Context {
@@ -42,17 +41,16 @@ export const machine = setup({
       }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const readApi = yield* ReadApi;
-            const api = yield* WriteApi;
+            const api = yield* Pglite;
 
             if (foodId === null) {
               return yield* Effect.fail("Food not selected");
             }
 
-            return yield* readApi.getCurrentDateLog(dailyLogDate).pipe(
-              Effect.catchTag("ReadApiError", () =>
+            return yield* api.getCurrentDateLog(dailyLogDate).pipe(
+              Effect.catchTag("PgliteError", () =>
                 Effect.gen(function* () {
-                  const planOption = yield* readApi.getCurrentPlan.pipe(
+                  const planOption = yield* api.getCurrentPlan.pipe(
                     Effect.option
                   );
 

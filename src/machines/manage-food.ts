@@ -7,8 +7,8 @@ import {
   type ActorRefFrom,
 } from "xstate";
 import type { foodTable } from "~/schema/drizzle";
+import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
-import { WriteApi } from "~/services/write-api";
 import { numberFieldActor } from "./number-field";
 import { optionalNumberFieldActor } from "./optional-number-field";
 import { textFieldActor } from "./text-field";
@@ -37,7 +37,7 @@ export const machine = setup({
     createFood: fromPromise(({ input }: { input: Context }) =>
       RuntimeClient.runPromise(
         Effect.gen(function* () {
-          const api = yield* WriteApi;
+          const api = yield* Pglite;
 
           const params = {
             name: input.name.getSnapshot().context.value,
@@ -65,7 +65,7 @@ export const machine = setup({
       ({ input: { id, ...input } }: { input: Context & { id: number } }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const api = yield* WriteApi;
+            const api = yield* Pglite;
 
             const params = {
               name: input.name.getSnapshot().context.value,

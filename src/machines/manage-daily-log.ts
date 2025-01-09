@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 import { assertEvent, assign, fromPromise, setup } from "xstate";
 import type { DailyLogSelect } from "~/schema/daily-log";
+import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
-import { WriteApi } from "~/services/write-api";
 
 export const machine = setup({
   types: {
@@ -31,7 +31,7 @@ export const machine = setup({
       }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const api = yield* WriteApi;
+            const api = yield* Pglite;
             yield* Effect.log(input);
 
             if (planId === null) {

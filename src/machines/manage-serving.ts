@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { assertEvent, fromPromise, setup, type ActorRefFrom } from "xstate";
+import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
-import { WriteApi } from "~/services/write-api";
 import { numberFieldActor } from "./number-field";
 
 export const machine = setup({
@@ -19,7 +19,7 @@ export const machine = setup({
       ({ input }: { input: { id: number; quantity: number } }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const api = yield* WriteApi;
+            const api = yield* Pglite;
             yield* api.updateServing({
               id: input.id,
               quantity: input.quantity,
@@ -30,7 +30,7 @@ export const machine = setup({
     removeServing: fromPromise(({ input }: { input: { id: number } }) =>
       RuntimeClient.runPromise(
         Effect.gen(function* () {
-          const api = yield* WriteApi;
+          const api = yield* Pglite;
           yield* api.removeServing({ id: input.id });
         })
       )
