@@ -1,5 +1,4 @@
 import { useMachine } from "@xstate/react";
-import { Either, Match } from "effect";
 import { Button } from "react-aria-components";
 import { usePlans } from "~/hooks/use-plans";
 import { machine } from "~/machines/manage-daily-log";
@@ -25,38 +24,32 @@ export default function UpdateDailyPlan({
             {({ close }) => (
               <div>
                 <div>
-                  {Either.match(plans, {
-                    onLeft: Match.valueTags({
-                      MissingData: () => <p>No plans found</p>,
-                      InvalidData: ({ parseError }) => (
-                        <p>
-                          Invalid data: {JSON.stringify(parseError, null, 2)}
-                        </p>
-                      ),
-                    }),
-                    onRight: (_) => (
-                      <>
-                        {_.map((plan) => (
-                          <div
-                            key={plan.id}
-                            className={cn(
-                              snapshot.context.selectedPlanId === plan.id &&
-                                "bg-slate-200"
-                            )}
+                  {plans.empty ? (
+                    <p>No plans found</p>
+                  ) : plans.data ? (
+                    <>
+                      {plans.data.map((plan) => (
+                        <div
+                          key={plan.id}
+                          className={cn(
+                            snapshot.context.selectedPlanId === plan.id &&
+                              "bg-slate-200"
+                          )}
+                        >
+                          <PlanInfo plan={plan} />
+                          <Button
+                            onPress={() =>
+                              send({ type: "plan.select", planId: plan.id })
+                            }
                           >
-                            <PlanInfo plan={plan} />
-                            <Button
-                              onPress={() =>
-                                send({ type: "plan.select", planId: plan.id })
-                              }
-                            >
-                              Select
-                            </Button>
-                          </div>
-                        ))}
-                      </>
-                    ),
-                  })}
+                            Select
+                          </Button>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </div>
 
                 <Button
