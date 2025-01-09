@@ -2,7 +2,6 @@ import { Schema } from "effect";
 import { FoodSelect } from "./food";
 import { FloatQuantityInsertPositive, Meal, PrimaryKeyIndex } from "./shared";
 
-// https://effect.website/play#2538c3ae8d4f
 export class ServingInsert extends Schema.Class<ServingInsert>("ServingInsert")(
   {
     foodId: PrimaryKeyIndex,

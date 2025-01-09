@@ -3,10 +3,7 @@ import CreatePlan from "~/components/CreatePlan";
 import PlanCard from "~/components/PlanCard";
 import { usePlans } from "~/hooks/use-plans";
 
-export const Route = createFileRoute("/plan/")({
-  component: HomeComponent,
-  errorComponent: () => <p>Error loading migrations</p>,
-});
+export const Route = createFileRoute("/plan/")({ component: HomeComponent });
 
 function HomeComponent() {
   const plans = usePlans();
