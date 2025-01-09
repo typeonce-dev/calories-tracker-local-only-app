@@ -1,7 +1,6 @@
 import { ListPlusIcon } from "lucide-react";
 import { Button as AriaButton, Group } from "react-aria-components";
 import { useFoods } from "~/hooks/use-foods";
-import type { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
 import CreateFood from "./CreateFood";
 import CreateServing from "./CreateServing";
@@ -14,7 +13,7 @@ export default function SelectFood({
   dailyLogDate,
 }: {
   meal: typeof Meal.Type;
-  dailyLogDate: typeof DailyLogSelect.fields.date.Type;
+  dailyLogDate: string;
 }) {
   const foods = useFoods();
   return (

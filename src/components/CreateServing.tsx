@@ -2,7 +2,6 @@ import { useMachine } from "@xstate/react";
 import { FilePlus2Icon } from "lucide-react";
 import { Form } from "react-aria-components";
 import { machine } from "~/machines/create-serving";
-import type { DailyLogSelect } from "~/schema/daily-log";
 import { ServingInsert } from "~/schema/serving";
 import type { Meal } from "~/schema/shared";
 import { Button } from "./Button";
@@ -17,7 +16,7 @@ export default function CreateServing({
 }: {
   foodId: number;
   meal: typeof Meal.Type;
-  dailyLogDate: typeof DailyLogSelect.fields.date.Type;
+  dailyLogDate: string;
 }) {
   const [snapshot, send] = useMachine(machine);
   return (

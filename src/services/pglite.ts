@@ -60,11 +60,11 @@ export class Pglite extends Effect.Service<Pglite>()("Pglite", {
       orm,
       query,
 
-      getCurrentDateLog: (date: typeof DailyLogSelect.fields.date.Type) =>
+      getCurrentDateLog: (date: string) =>
         query((_) =>
           _.select()
             .from(dailyLogTable)
-            .where(eq(dailyLogTable.date, DailyLogSelect.formatDate(date)))
+            .where(eq(dailyLogTable.date, date))
             .limit(1)
         ).pipe(
           singleResult(() => new PgliteError({ cause: "No log found" })),
@@ -77,14 +77,7 @@ export class Pglite extends Effect.Service<Pglite>()("Pglite", {
 
       createDailyLog: flow(
         execute(DailyLogInsert, (values) =>
-          query((_) =>
-            _.insert(dailyLogTable)
-              .values({
-                ...values,
-                date: DateTime.formatIsoDateUtc(values.date),
-              })
-              .returning()
-          )
+          query((_) => _.insert(dailyLogTable).values(values).returning())
         ),
         singleResult(() => new PgliteError({ cause: "Daily log not created" })),
         Effect.flatMap(Schema.decode(DailyLogSelect))

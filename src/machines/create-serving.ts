@@ -6,7 +6,6 @@ import {
   setup,
   type ActorRefFrom,
 } from "xstate";
-import { DailyLogSelect } from "~/schema/daily-log";
 import type { Meal } from "~/schema/shared";
 import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
@@ -23,7 +22,7 @@ export const machine = setup({
     events: {} as {
       type: "quantity.confirm";
       meal: typeof Meal.Type;
-      dailyLogDate: typeof DailyLogSelect.fields.date.Type;
+      dailyLogDate: string;
       foodId: number;
     },
   },
@@ -36,7 +35,7 @@ export const machine = setup({
           quantity: Context["quantity"];
           foodId: number;
           meal: typeof Meal.Type;
-          dailyLogDate: typeof DailyLogSelect.fields.date.Type;
+          dailyLogDate: string;
         };
       }) =>
         RuntimeClient.runPromise(

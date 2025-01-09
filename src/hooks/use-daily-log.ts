@@ -1,10 +1,9 @@
 import { eq, sql as sqlOrm } from "drizzle-orm";
-import { DailyLogSelect } from "~/schema/daily-log";
 import { foodTable, servingTable } from "~/schema/drizzle";
 import { ServingSelectWithFoods } from "~/schema/serving";
 import { useQuery } from "./use-query";
 
-export const useDailyLog = (date: typeof DailyLogSelect.fields.date.Type) => {
+export const useDailyLog = (date: string) => {
   return useQuery(
     (orm) =>
       orm
@@ -21,7 +20,7 @@ export const useDailyLog = (date: typeof DailyLogSelect.fields.date.Type) => {
           proteins: foodTable.proteins,
         })
         .from(servingTable)
-        .where(eq(servingTable.dailyLogDate, DailyLogSelect.formatDate(date)))
+        .where(eq(servingTable.dailyLogDate, date))
         .leftJoin(foodTable, eq(servingTable.foodId, foodTable.id))
         .toSQL(),
     ServingSelectWithFoods

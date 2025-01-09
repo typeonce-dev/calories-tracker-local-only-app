@@ -4,7 +4,7 @@ import { PrimaryKeyIndex } from "./shared";
 export class DailyLogInsert extends Schema.Class<DailyLogInsert>(
   "DailyLogInsert"
 )({
-  date: Schema.DateTimeUtcFromSelf,
+  date: Schema.DateTimeUtc,
   planId: PrimaryKeyIndex,
 }) {}
 
