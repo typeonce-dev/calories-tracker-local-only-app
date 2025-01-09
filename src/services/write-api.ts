@@ -10,7 +10,6 @@ import {
   foodTable,
   planTable,
   servingTable,
-  systemTable,
 } from "~/schema/drizzle";
 import { FoodInsert, FoodUpdate } from "~/schema/food";
 import { _PlanInsert, _PlanUpdate, PlanRemove } from "~/schema/plan";
@@ -132,17 +131,6 @@ export class WriteApi extends Effect.Service<WriteApi>()("WriteApi", {
 
       removePlan: execute(PlanRemove, ({ id }) =>
         query((_) => _.delete(planTable).where(eq(planTable.id, id)))
-      ),
-
-      createSystem: query((_) =>
-        _.insert(systemTable).values({ version: 0 }).returning()
-      ).pipe(
-        singleResult(() => new WriteApiError({ cause: "System not created" }))
-      ),
-
-      updateSystemVersion: execute(Schema.Positive, (version) =>
-        // Single row or multiple?
-        query((_) => _.update(systemTable).set({ version }))
       ),
     };
   }),
