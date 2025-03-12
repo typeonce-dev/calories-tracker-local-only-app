@@ -11,17 +11,10 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as DateImport } from './routes/$date'
 import { Route as IndexImport } from './routes/index'
 import { Route as PlanIndexImport } from './routes/plan/index'
 
 // Create/Update Routes
-
-const DateRoute = DateImport.update({
-  id: '/$date',
-  path: '/$date',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -46,13 +39,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/$date': {
-      id: '/$date'
-      path: '/$date'
-      fullPath: '/$date'
-      preLoaderRoute: typeof DateImport
-      parentRoute: typeof rootRoute
-    }
     '/plan/': {
       id: '/plan/'
       path: '/plan'
@@ -67,41 +53,36 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$date': typeof DateRoute
   '/plan': typeof PlanIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$date': typeof DateRoute
   '/plan': typeof PlanIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/$date': typeof DateRoute
   '/plan/': typeof PlanIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$date' | '/plan'
+  fullPaths: '/' | '/plan'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$date' | '/plan'
-  id: '__root__' | '/' | '/$date' | '/plan/'
+  to: '/' | '/plan'
+  id: '__root__' | '/' | '/plan/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DateRoute: typeof DateRoute
   PlanIndexRoute: typeof PlanIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DateRoute: DateRoute,
   PlanIndexRoute: PlanIndexRoute,
 }
 
@@ -116,15 +97,11 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/$date",
         "/plan/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/$date": {
-      "filePath": "$date.tsx"
     },
     "/plan/": {
       "filePath": "plan/index.tsx"

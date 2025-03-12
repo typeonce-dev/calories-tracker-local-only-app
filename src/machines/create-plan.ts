@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { assign, fromPromise, setup, type ActorRefFrom } from "xstate";
+import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
-import { WriteApi } from "~/services/write-api";
 import { numberFieldActor } from "./number-field";
 
 interface Context {
@@ -22,7 +22,7 @@ export const machine = setup({
       ({ input }: { input: Omit<Context, "submitError"> }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const api = yield* WriteApi;
+            const api = yield* Pglite;
 
             const { id } = yield* api.createPlan({
               calories: input.calories.getSnapshot().context.value,

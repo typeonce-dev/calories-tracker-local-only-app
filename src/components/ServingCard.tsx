@@ -1,7 +1,7 @@
 import { Group } from "react-aria-components";
 import type { ServingSelectWithFoods } from "~/schema/serving";
-import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./Icons";
 import ManageServing from "./ManageServing";
+import { CarbohydrateIcon, FatIcon, ProteinIcon } from "./ui/Icons";
 
 const format = (value: number, quantity: number) => (value / 100) * quantity;
 

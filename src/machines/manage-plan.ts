@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { assertEvent, fromPromise, setup, type ActorRefFrom } from "xstate";
+import { Pglite } from "~/services/pglite";
 import { RuntimeClient } from "~/services/runtime-client";
-import { WriteApi } from "~/services/write-api";
 import { numberFieldActor } from "./number-field";
 
 export const machine = setup({
@@ -38,7 +38,7 @@ export const machine = setup({
       }) =>
         RuntimeClient.runPromise(
           Effect.gen(function* () {
-            const api = yield* WriteApi;
+            const api = yield* Pglite;
             yield* Effect.log(input);
             yield* api.updatePlan(input);
           }).pipe(Effect.tapErrorCause(Effect.logError))
@@ -47,7 +47,7 @@ export const machine = setup({
     removePlan: fromPromise(({ input }: { input: { id: number } }) =>
       RuntimeClient.runPromise(
         Effect.gen(function* () {
-          const api = yield* WriteApi;
+          const api = yield* Pglite;
           yield* Effect.log(input);
           yield* api.removePlan(input);
         }).pipe(Effect.tapErrorCause(Effect.logError))
@@ -56,7 +56,7 @@ export const machine = setup({
     setAsCurrentPlan: fromPromise(({ input }: { input: { id: number } }) =>
       RuntimeClient.runPromise(
         Effect.gen(function* () {
-          const api = yield* WriteApi;
+          const api = yield* Pglite;
           yield* Effect.log(input);
           yield* api.updateCurrentPlan(input.id);
         }).pipe(Effect.tapErrorCause(Effect.logError))

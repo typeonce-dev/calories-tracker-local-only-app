@@ -9,7 +9,7 @@ import type { textFieldActor } from "~/machines/text-field";
 import { FoodInsert } from "~/schema/food";
 import { validate } from "~/utils";
 import QuantityField from "./QuantityField";
-import { FieldError, Input, Label, TextField } from "./TextField";
+import { FieldError, Input, Label, TextField } from "./ui/TextField";
 
 const TextFieldFromActor = ({
   actor,

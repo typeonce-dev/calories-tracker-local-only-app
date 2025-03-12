@@ -1,10 +1,9 @@
 import { eq } from "drizzle-orm";
-import { DailyLogSelect } from "~/schema/daily-log";
 import { dailyLogTable, planTable } from "~/schema/drizzle";
 import { PlanSelectDaily } from "~/schema/plan";
 import { useQuerySingle } from "./use-query";
 
-export const useDailyPlan = (date: typeof DailyLogSelect.fields.date.Type) => {
+export const useDailyPlan = (date: string) => {
   return useQuerySingle(
     (orm) =>
       orm
@@ -19,7 +18,7 @@ export const useDailyPlan = (date: typeof DailyLogSelect.fields.date.Type) => {
         .from(planTable)
         .groupBy(planTable.id)
         .leftJoin(dailyLogTable, eq(dailyLogTable.planId, planTable.id))
-        .where(eq(dailyLogTable.date, DailyLogSelect.formatDate(date)))
+        .where(eq(dailyLogTable.date, date))
         .toSQL(),
     PlanSelectDaily
   );
